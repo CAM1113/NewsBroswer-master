@@ -23,7 +23,7 @@ public class AutoFitTextView extends TextView {
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        
+
         super.setText(text, type);
     }
 }

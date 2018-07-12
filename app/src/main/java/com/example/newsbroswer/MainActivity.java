@@ -1,8 +1,9 @@
 package com.example.newsbroswer;
-
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,9 +28,7 @@ import com.example.newsbroswer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
-
     List<News> newsList =new ArrayList<>();
     List<Channel> channelListForRecycler = new ArrayList<>();
     List<Channel> channelListForUnChoosed=new ArrayList<>();
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("CAM",channelListForUnChoosed.size()+"");
             updateChannelUI();
         }
-
         @Override
         public void onFail(String errorInfo, int errorCode) {
             Log.e("CAM",errorInfo);
@@ -59,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView channelRecyclerView;
     RecyclerView newsRecvyclerView;
 
+    SwipeRefreshLayout refreshLayout;
 
     String channelNow="";
     @Override
@@ -90,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(Channel c) {
                 //处理频道的点击事件
-                Toast.makeText(MainActivity.this, c.getName()+c.channelId, Toast.LENGTH_SHORT).show();
-                if(c.channelId.equals(""))
+               if(c.channelId.equals(""))
                 {
                     initNews(new NewsConfig());
                     channelNow="";
@@ -104,6 +102,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         channelRecyclerView.setAdapter(channelAdapter);
+
+
+        //设置下拉刷新的控件SwipeRefreshLayout
+        refreshLayout= (SwipeRefreshLayout) findViewById(R.id.swip_refresh);
+        refreshLayout.setColorSchemeResources(R.color.red);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initNews(new NewsConfig("",channelNow,"","",""));
+            }
+        });
 
         //设置新闻的RecyclerView
         newsRecvyclerView= (RecyclerView) findViewById(R.id.news_recycler);
@@ -125,6 +134,13 @@ public class MainActivity extends AppCompatActivity {
         initNews(new NewsConfig());
         //网络请求获取频道列表
         Utils.getChannels(channelsOverListener);
+
+
+
+
+
+
+
     }
 
     //异步消息通信，当网络请求结束后，更新页面
@@ -141,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
                     //防止多个线程刷新新闻列表，使用线程锁同步
                     synchronized(MainActivity.this)
                     {
-                        if(newsList ==null)
+                        refreshLayout.setRefreshing(false);
+                        if(newsList ==null||newsList.size()==0)
                         {
                             Log.e("CAM","新闻列表为空");
-                            return;
                         }
                         newsAdapter.notifyDataSetChanged();
                         break;
@@ -176,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
     ChannelAdapter channelAdapter;
     private void initNews(NewsConfig config)
     {
+        refreshLayout.setRefreshing(true);
         newsRecvyclerView.scrollToPosition(0);
         //网络请求获取新闻列表
         Utils.getNews(new RequestNewsOverListener() {
