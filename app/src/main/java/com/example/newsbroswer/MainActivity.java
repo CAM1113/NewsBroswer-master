@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -59,7 +60,20 @@ public class MainActivity extends AppCompatActivity {
 
     SwipeRefreshLayout refreshLayout;
 
+    NewsAdapter newsAdapter;
+    ChannelAdapter channelAdapter;
     String channelNow="";
+
+    //新闻列表的Manager
+    LinearLayoutManager newsLinearLayoutManager;
+
+    //新闻列表的最后一个可见项
+    int lastVisibleItem=0;
+    FrameLayout frameLayoutForXiaLaJiaZai;
+    int pageNow=1;
+
+    //用来记录是否在刷新新闻，如果正在刷新新闻，则不在响应下拉刷新，上拉加载和点击涮新
+    boolean isGettingNews=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,15 +81,18 @@ public class MainActivity extends AppCompatActivity {
         //设置新的actionbar
         Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //初始化actionbar中的空间
+        //初始化actionbar中的控件
         ImageView refreshImageView= (ImageView) findViewById(R.id.refreshNews);
         refreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                initNews(new NewsConfig("",channelNow,"","",""));
+                if(!isGettingNews)
+                    initNews(new NewsConfig("",channelNow,"","",""));
                 Log.e("CAM",channelNow+"?");
             }
         });
+
+        frameLayoutForXiaLaJiaZai= (FrameLayout) findViewById(R.id.xialajindutiao);
 
 
         //设置频道的RecyclerView
@@ -107,17 +124,12 @@ public class MainActivity extends AppCompatActivity {
         //设置下拉刷新的控件SwipeRefreshLayout
         refreshLayout= (SwipeRefreshLayout) findViewById(R.id.swip_refresh);
         refreshLayout.setColorSchemeResources(R.color.red);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                initNews(new NewsConfig("",channelNow,"","",""));
-            }
-        });
+
 
         //设置新闻的RecyclerView
         newsRecvyclerView= (RecyclerView) findViewById(R.id.news_recycler);
-        LinearLayoutManager manager2=new LinearLayoutManager(this);
-        newsRecvyclerView.setLayoutManager(manager2);
+        newsLinearLayoutManager=new LinearLayoutManager(this);
+        newsRecvyclerView.setLayoutManager(newsLinearLayoutManager);
         newsAdapter=new NewsAdapter(newsList, new OnNewsClickListener() {
             @Override
             public void onClick(News news) {
@@ -131,6 +143,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         newsRecvyclerView.setAdapter(newsAdapter);
+
+        //设置新闻列表的下拉加载
+        newsRecvyclerView .addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState){
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE &&
+                        lastVisibleItem + 1 == newsAdapter.getItemCount() &&
+                        !isGettingNews) {
+                    //上拉加载的事件处理
+                    frameLayoutForXiaLaJiaZai.setVisibility(View.VISIBLE);
+                    moreNews(new NewsConfig("",channelNow,"",""+pageNow,""));
+                    }
+                }
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = newsLinearLayoutManager.findLastVisibleItemPosition();
+            }
+        });
+
+        //设置新闻列表的下拉刷新
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(!isGettingNews)
+                    initNews(new NewsConfig("",channelNow,"","",""));
+            }
+        });
+
+
+
+
+
         initNews(new NewsConfig());
         //网络请求获取频道列表
         Utils.getChannels(channelsOverListener);
@@ -157,7 +203,10 @@ public class MainActivity extends AppCompatActivity {
                     //防止多个线程刷新新闻列表，使用线程锁同步
                     synchronized(MainActivity.this)
                     {
+                        //取消获取新闻信息的限制，和加载动画
+                        isGettingNews=false;
                         refreshLayout.setRefreshing(false);
+                        frameLayoutForXiaLaJiaZai.setVisibility(View.GONE);
                         if(newsList ==null||newsList.size()==0)
                         {
                             Log.e("CAM","新闻列表为空");
@@ -188,10 +237,11 @@ public class MainActivity extends AppCompatActivity {
         handler.sendEmptyMessage(FINISH_CHANNEL);
     }
 
-    NewsAdapter newsAdapter;
-    ChannelAdapter channelAdapter;
+
     private void initNews(NewsConfig config)
     {
+        pageNow=1;
+        isGettingNews=true;
         refreshLayout.setRefreshing(true);
         newsRecvyclerView.scrollToPosition(0);
         //网络请求获取新闻列表
@@ -209,6 +259,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void moreNews(NewsConfig config)
     {
+        pageNow++;
+        isGettingNews=true;
         //网络请求获取新闻列表
         Utils.getNews(new RequestNewsOverListener() {
             @Override
@@ -220,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFail(String errorInfo, int errorCode) {}
         }, config);
     }
+
 
     private void initChannels()
     {
