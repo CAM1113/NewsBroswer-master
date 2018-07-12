@@ -1,6 +1,5 @@
 package com.example.newsbroswer;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,28 +32,7 @@ public class MainActivity extends AppCompatActivity {
     List<News> newsList =new ArrayList<>();
     List<Channel> channelListForRecycler = new ArrayList<>();
     List<Channel> channelListForUnChoosed=new ArrayList<>();
-    //请求新闻频道列表结束时回调，新的线程
-    RequestChannelsOverListener channelsOverListener=new RequestChannelsOverListener() {
-        @Override
-        public void onSuccess(List<Channel> cList) {
-            if(cList==null||cList.size()==0)
-                return;
-            int num=cList.size();
-            for(int i=num-1;i>=num/2;i--)
-            {
-                channelListForRecycler.add(cList.get(i));
-                cList.remove(i);
-            }
-            channelListForUnChoosed.addAll(cList);
-            Log.e("CAM",channelListForRecycler.size()+"");
-            Log.e("CAM",channelListForUnChoosed.size()+"");
-            updateChannelUI();
-        }
-        @Override
-        public void onFail(String errorInfo, int errorCode) {
-            Log.e("CAM",errorInfo);
-        }
-    };
+
     RecyclerView channelRecyclerView;
     RecyclerView newsRecvyclerView;
 
@@ -86,14 +64,13 @@ public class MainActivity extends AppCompatActivity {
         refreshImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //刷新图片的点击事件，如果正在获取新闻，则不允许刷新
                 if(!isGettingNews)
                     initNews(new NewsConfig("",channelNow,"","",""));
-                Log.e("CAM",channelNow+"?");
             }
         });
 
         frameLayoutForXiaLaJiaZai= (FrameLayout) findViewById(R.id.xialajindutiao);
-
 
         //设置频道的RecyclerView
         channelListForRecycler.add(new Channel("","推荐"));//设置推荐频道
@@ -105,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         channelAdapter=new ChannelAdapter(channelListForRecycler, new OnChannelClickListener() {
             @Override
             public void onClick(Channel c) {
-                //处理频道的点击事件
+                //处理频道的点击事件,如果点击推荐，则不需设置频道
                if(c.channelId.equals(""))
                 {
                     initNews(new NewsConfig());
@@ -139,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(StaticFinalValues.NEWS_INTENE_LINK,news.link);
                 intent.putExtra(StaticFinalValues.NEWS_INTENT_HTML,news.html);
                 startActivity(intent);
-                Log.e("CAM",news.getLink());
             }
         });
         newsRecvyclerView.setAdapter(newsAdapter);
@@ -173,25 +149,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
+        //获取频道列表
+        initChannels();
+        //获取新闻列表
         initNews(new NewsConfig());
-        //网络请求获取频道列表
-        Utils.getChannels(channelsOverListener);
-
-
-
-
-
-
 
     }
 
     //异步消息通信，当网络请求结束后，更新页面
-    private static final int FINISH_NEWS =0x1;
-    private static final int FINISH_CHANNEL =0x2;
+    private static final int UPDATE_NEWS =0x1;
+    private static final int UPDATE_CHANNELS =0x2;
+    private static final int NO_MORE_NEWS=0x3;
     Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -199,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what)
             {
                 //新闻请求结束
-                case FINISH_NEWS:
+                case UPDATE_NEWS:
                     //防止多个线程刷新新闻列表，使用线程锁同步
                     synchronized(MainActivity.this)
                     {
@@ -207,15 +175,18 @@ public class MainActivity extends AppCompatActivity {
                         isGettingNews=false;
                         refreshLayout.setRefreshing(false);
                         frameLayoutForXiaLaJiaZai.setVisibility(View.GONE);
+
+                        //更新新闻列表
                         if(newsList ==null||newsList.size()==0)
                         {
+                            Toast.makeText(MainActivity.this, "没有获取到新闻", Toast.LENGTH_SHORT).show();
                             Log.e("CAM","新闻列表为空");
                         }
                         newsAdapter.notifyDataSetChanged();
                         break;
                     }
                 //频道请求结束,更新频道UI
-                case FINISH_CHANNEL:
+                case UPDATE_CHANNELS:
                     if(channelListForRecycler ==null)
                     {
                         Toast.makeText(MainActivity.this,"频道列表为空",Toast.LENGTH_LONG).show();
@@ -223,20 +194,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                     channelAdapter.notifyDataSetChanged();
                     break;
+                case NO_MORE_NEWS:
+                    Toast.makeText(MainActivity.this, "没有更多新闻了", Toast.LENGTH_SHORT).show();
             }
+
         }
     };
 
     private void updateNewsUI()
     {
-        handler.sendEmptyMessage(FINISH_NEWS);
+        handler.sendEmptyMessage(UPDATE_NEWS);
     }
 
     private void updateChannelUI()
     {
-        handler.sendEmptyMessage(FINISH_CHANNEL);
+        handler.sendEmptyMessage(UPDATE_CHANNELS);
     }
-
 
     private void initNews(NewsConfig config)
     {
@@ -248,12 +221,21 @@ public class MainActivity extends AppCompatActivity {
         Utils.getNews(new RequestNewsOverListener() {
             @Override
             public void onSuccess(List<News> newsList) {
-                MainActivity.this.newsList.clear();
-                MainActivity.this.newsList.addAll(newsList);
-                updateNewsUI();
+                if(newsList.size()>0)
+                {
+                    //获取到了新闻，更新列表
+                    MainActivity.this.newsList.clear();
+                    MainActivity.this.newsList.addAll(newsList);
+                    handler.sendEmptyMessage(UPDATE_NEWS);
+                }
+                else
+                {
+                    //没有新闻了
+                    handler.sendEmptyMessage(NO_MORE_NEWS);
+                }
             }
             @Override
-            public void onFail(String errorInfo, int errorCode) {}
+            public void onFail(String errorInfo, int errorCode) {Log.e("CAM",errorInfo+"    "+errorCode);}
         }, config);
     }
 
@@ -265,18 +247,51 @@ public class MainActivity extends AppCompatActivity {
         Utils.getNews(new RequestNewsOverListener() {
             @Override
             public void onSuccess(List<News> newsList) {
-                MainActivity.this.newsList.addAll(newsList);
-                updateNewsUI();
+                if(newsList.size()>0)
+                {
+                    MainActivity.this.newsList.addAll(newsList);
+                    updateNewsUI();
+                }
+                else
+                {
+                    handler.sendEmptyMessage(NO_MORE_NEWS);
+                }
             }
             @Override
-            public void onFail(String errorInfo, int errorCode) {}
+            public void onFail(String errorInfo, int errorCode) {Log.e("CAM",errorInfo+"    "+errorCode);}
         }, config);
     }
 
 
+
+
+    //请求新闻频道列表结束时回调，新的线程
+    RequestChannelsOverListener channelsOverListener=new RequestChannelsOverListener() {
+        @Override
+        public void onSuccess(List<Channel> cList) {
+            //获取成功
+            if(cList==null||cList.size()==0)
+                return;
+            int num=cList.size();
+            //前一半放到列表中展示，后一半保留
+            for(int i=num-1;i>=num/2;i--)
+            {
+                channelListForRecycler.add(cList.get(i));
+                cList.remove(i);
+            }
+            channelListForUnChoosed.addAll(cList);
+            //发送消息，更新频道列表
+            handler.sendEmptyMessage(UPDATE_CHANNELS);
+        }
+        @Override
+        public void onFail(String errorInfo, int errorCode) {
+            Log.e("CAM",errorInfo+"    "+errorCode);
+        }
+    };
+    //初始化频道
     private void initChannels()
     {
-
+        //从网络上获取频道信息
+        Utils.getChannels(channelsOverListener);
     }
-
 }
