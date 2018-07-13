@@ -92,13 +92,7 @@
             android:layout_width="match_parent"
             android:id="@+id/swip_refresh"
             android:layout_height="match_parent"
-            >
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/news_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </android.support.v7.widget.RecyclerView>
-        </android.support.v4.widget.SwipeRefreshLayout>
+            ></android.support.v4.widget.SwipeRefreshLayout>
 
         <FrameLayout
             android:visibility="gone"
@@ -118,6 +112,12 @@
                 android:layout_height="25dp"
                 />
             </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/news_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
 
     </FrameLayout>
 

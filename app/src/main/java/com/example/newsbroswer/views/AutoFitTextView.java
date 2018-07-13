@@ -30,14 +30,13 @@ public class AutoFitTextView extends TextView {
     public void setText(CharSequence text, BufferType type) {
         switch (text.length())
         {
-            case 1:setTextSize(30);break;
-            case 2:setTextSize(29);break;
-            case 3:setTextSize(28);break;
-            case 4:setTextSize(26);break;
-            case 5:setTextSize(24);break;
-            case 6:setTextSize(22);break;
-            case 7:setTextSize(20);break;
-                default:;setTextSize(19);break;
+            case 1:setTextSize(25);break;
+            case 2:setTextSize(21);break;
+            case 3:setTextSize(19);break;
+            case 4:setTextSize(17);break;
+            case 5:setTextSize(15);break;
+            case 6:setTextSize(13);break;
+                default:;setTextSize(10);break;
         }
 
         super.setText(text, type);

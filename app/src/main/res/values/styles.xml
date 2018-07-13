@@ -15,4 +15,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+
+    <style name="MyDialogStyle"  parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+
 </resources>
