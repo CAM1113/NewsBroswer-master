@@ -35,6 +35,7 @@
         </LinearLayout>
 
         <GridView
+            android:overScrollMode="never"
             android:numColumns="3"
             android:layout_gravity="center"
             android:gravity="center"
@@ -56,6 +57,7 @@
         </LinearLayout>
 
         <GridView
+            android:overScrollMode="never"
             android:numColumns="3"
             android:layout_gravity="center"
             android:gravity="center"
@@ -63,5 +65,16 @@
             android:layout_width="match_parent"
             android:layout_height="182dp">
         </GridView>
+        <Button
+            android:id="@+id/button"
+            android:text="确定"
+            android:textSize="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bg_button"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>

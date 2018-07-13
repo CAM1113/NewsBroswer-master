@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -412,6 +413,13 @@ public class MainActivity extends AppCompatActivity {
         ScrollView scrollView= (ScrollView) LayoutInflater.from(this).inflate(R.layout.my_channel_choose,null);
         GridView channelshowLayout=scrollView.findViewById(R.id.channel_show_layout);
         GridView channelchooseLayout=scrollView.findViewById(R.id.channel_choose_layout);
+        Button button=scrollView.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
 
         final TextView channelLock=scrollView.findViewById(R.id.changeChannelliebiao);
         if(changChannelForShowLock)
