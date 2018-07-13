@@ -1,9 +1,8 @@
 package com.example.newsbroswer;
-import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,20 +10,24 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +42,6 @@ import com.example.newsbroswer.interfaces.RequestChannelsOverListener;
 import com.example.newsbroswer.interfaces.RequestNewsOverListener;
 import com.example.newsbroswer.utils.StaticFinalValues;
 import com.example.newsbroswer.utils.Utils;
-import com.example.newsbroswer.views.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +57,21 @@ public class MainActivity extends AppCompatActivity {
 
     NewsAdapter newsAdapter;
     ChannelAdapter channelAdapter;
-    String channelNow="";
 
     //新闻列表的Manager
     LinearLayoutManager newsLinearLayoutManager;
 
     //新闻列表的最后一个可见项
     int lastVisibleItem=0;
-    FrameLayout frameLayoutForXiaLaJiaZai;
+    //加载进度条
+    FrameLayout frameLayoutForJiaZai;
+
+    //当前新闻页
     int pageNow=1;
+    //当前频道
+    String channelNow="";
+    //当前标题
+    String titleNow="";
 
     //用来记录是否在刷新新闻，如果正在刷新新闻，则不在响应下拉刷新，上拉加载和点击涮新
     boolean isGettingNews=true;
@@ -74,15 +82,13 @@ public class MainActivity extends AppCompatActivity {
         //设置新的actionbar
         Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         initImageViews();
-
-
-
-
+        initTextViewForSearch();
         //设置频道的RecyclerView
         channelListForRecycler.add(new Channel("","推荐"));//设置推荐频道
         channelNow="";//推荐频道的频道名为“”
+        pageNow=1;
+        titleNow="";
         channelRecyclerView = (RecyclerView) findViewById(R.id.channelRecyclerView);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -90,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
         channelAdapter=new ChannelAdapter(channelListForRecycler, new OnChannelClickListener() {
             @Override
             public void onClick(Channel c) {
-                //处理频道的点击事件,如果点击推荐，则不需设置频道
+                //处理频道的点击事件
+                //如果点击推荐，则不需设置频道
                if(c.channelId.equals(""))
                 {
                     initNews(new NewsConfig());
@@ -99,17 +106,16 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     channelNow=c.getName();
-                    initNews(new NewsConfig("",c.getName(),"","",""));
+                    pageNow=1;
+                    initNews(new NewsConfig("",c.getName(),titleNow,pageNow+"",""));
                 }
             }
         });
         channelRecyclerView.setAdapter(channelAdapter);
 
-
         //设置下拉刷新的控件SwipeRefreshLayout
         refreshLayout= (SwipeRefreshLayout) findViewById(R.id.swip_refresh);
         refreshLayout.setColorSchemeResources(R.color.red);
-
 
         //设置新闻的RecyclerView
         newsRecvyclerView= (RecyclerView) findViewById(R.id.news_recycler);
@@ -127,11 +133,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         newsRecvyclerView.setAdapter(newsAdapter);
-
-
         //新闻列表的下拉加载的progressBar
-        frameLayoutForXiaLaJiaZai= (FrameLayout) findViewById(R.id.xialajindutiao);
-        //设置新闻列表的下拉加载逻辑
+        frameLayoutForJiaZai = (FrameLayout) findViewById(R.id.jiazaijindutiao);
+        //设置新闻列表的上拉加载逻辑
         newsRecvyclerView .addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState){
@@ -140,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
                         lastVisibleItem + 1 == newsAdapter.getItemCount() &&
                         !isGettingNews) {
                     //上拉加载的事件处理
-                    frameLayoutForXiaLaJiaZai.setVisibility(View.VISIBLE);
-                    moreNews(new NewsConfig("",channelNow,"",""+pageNow,""));
+                    frameLayoutForJiaZai.setVisibility(View.VISIBLE);
+                    moreNews(new NewsConfig("",channelNow,titleNow,""+pageNow,""));
                     }
                 }
             @Override
@@ -156,14 +160,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 if(!isGettingNews)
-                    initNews(new NewsConfig("",channelNow,"","",""));
+                {
+                    initNews(new NewsConfig("",channelNow,titleNow,"",""));
+                }
             }
         });
 
         //获取频道列表
         initChannels();
         //获取新闻列表
-        initNews(new NewsConfig());
+        initNews(new NewsConfig("",channelNow,titleNow,pageNow+"",""));
 
     }
 
@@ -185,12 +191,12 @@ public class MainActivity extends AppCompatActivity {
                         //取消获取新闻信息的限制，和加载动画
                         isGettingNews=false;
                         refreshLayout.setRefreshing(false);
-                        frameLayoutForXiaLaJiaZai.setVisibility(View.GONE);
+                        frameLayoutForJiaZai.setVisibility(View.GONE);
 
                         //更新新闻列表
                         if(newsList ==null||newsList.size()==0)
                         {
-                            Toast.makeText(MainActivity.this, "没有获取到新闻", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "没有该类型的新闻", Toast.LENGTH_SHORT).show();
                             Log.e("CAM","新闻列表为空");
                         }
                         newsAdapter.notifyDataSetChanged();
@@ -208,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
                 case NO_MORE_NEWS:
                     Toast.makeText(MainActivity.this, "没有更多新闻了", Toast.LENGTH_SHORT).show();
             }
-
         }
     };
 
@@ -222,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
         handler.sendEmptyMessage(UPDATE_CHANNELS);
     }
 
+
     private void initNews(NewsConfig config)
     {
         pageNow=1;
@@ -232,26 +238,17 @@ public class MainActivity extends AppCompatActivity {
         Utils.getNews(new RequestNewsOverListener() {
             @Override
             public void onSuccess(List<News> newsList) {
-                if(newsList.size()>0)
-                {
-                    //获取到了新闻，更新列表
-                    MainActivity.this.newsList.clear();
-                    MainActivity.this.newsList.addAll(newsList);
-                    handler.sendEmptyMessage(UPDATE_NEWS);
-                }
-                else
-                {
-                    //没有新闻了
-                    handler.sendEmptyMessage(NO_MORE_NEWS);
-                }
+                //获取到了新闻，更新列表
+                MainActivity.this.newsList.clear();
+                MainActivity.this.newsList.addAll(newsList);
+                handler.sendEmptyMessage(UPDATE_NEWS);
             }
             @Override
             public void onFail(String errorInfo, int errorCode) {Log.e("CAM",errorInfo+"    "+errorCode);}
         }, config);
     }
 
-    private void moreNews(NewsConfig config)
-    {
+    private void moreNews(NewsConfig config) {
         pageNow++;
         isGettingNews=true;
         //网络请求获取新闻列表
@@ -272,9 +269,6 @@ public class MainActivity extends AppCompatActivity {
             public void onFail(String errorInfo, int errorCode) {Log.e("CAM",errorInfo+"    "+errorCode);}
         }, config);
     }
-
-
-
 
     //请求新闻频道列表结束时回调，新的线程
     RequestChannelsOverListener channelsOverListener=new RequestChannelsOverListener() {
@@ -307,6 +301,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void initTextViewForSearch()
+    {
+        final EditText edittextSearch= (EditText) findViewById(R.id.editView);
+        edittextSearch.setText("");
+        titleNow="";
+        //用户点击搜索，开始查找新的新闻
+        edittextSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    // 先隐藏键盘
+                    ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus()
+                                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    //进行搜索操作的方法，在该方法中可以加入mEditSearchUser的非空判断
+                    titleNow=edittextSearch.getText()+"";
+                    pageNow=1;
+                    channelNow="";
+                    channelAdapter.setFirstTrue();
+                    channelAdapter.notifyDataSetChanged();
+                    initNews(new NewsConfig("",channelNow,titleNow,pageNow+"",""));
+                }
+                return false;
+            }
+        });
+
+
+        //根据用户的输入，改变titleNow的值
+        edittextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                titleNow=edittextSearch.getText()+"";
+            }
+        });
+    }
+
+
+    //记录打开频道修改对话框后，是否修改了频道列表
+    private boolean isChangeChannelForShow=false;
     private void initImageViews()
     {
         //点击刷新的控件
@@ -316,7 +360,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //刷新图片的点击事件，如果正在获取新闻，则不允许刷新
                 if(!isGettingNews)
+                {
+                    refreshLayout.setRefreshing(true);
                     initNews(new NewsConfig("",channelNow,"","",""));
+                }
+
             }
         });
 
@@ -324,8 +372,23 @@ public class MainActivity extends AppCompatActivity {
         channelSetImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog dialog=new AlertDialog.Builder(MainActivity.this,R.style.MyDialogStyle)
+                dialog=new AlertDialog.Builder(MainActivity.this,R.style.MyDialogStyle)
                         .setCancelable(true)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                               //锁住修改锁，下次打开必须解锁才能修改
+                                changChannelForShowLock=true;
+                                if(isChangeChannelForShow)
+                                {
+                                    isChangeChannelForShow=false;
+                                    channelAdapter.setFirstTrue();
+                                    channelAdapter.notifyDataSetChanged();
+                                    channelNow="";
+                                    initNews(new NewsConfig("",channelNow,titleNow,"",""));
+                                }
+                            }
+                        })
                         .create();
                 dialog.show();
                 WindowManager m = getWindowManager();
@@ -333,88 +396,124 @@ public class MainActivity extends AppCompatActivity {
                 android.view.WindowManager.LayoutParams params = dialog.getWindow().getAttributes();  //获取对话框当前的参数值、
                 params.width = (int) (d.getWidth());    //宽度设置全屏宽度
                 dialog.getWindow().setAttributes(params);
-                dialog.getWindow().setGravity(Gravity.BOTTOM);
-                dialog.getWindow().setContentView(getChannelDialogView());
+                dialog.getWindow().setGravity(Gravity.BOTTOM);//设置对话框打开位置
+                dialog.getWindow().setContentView(getChannelDialogView());//设置对话框界面
+            }
+        });
+    }
 
+    //频道选择对话框
+    AlertDialog dialog;
+    //是否要修改频道列表
+    boolean changChannelForShowLock =true;
+    private static final int LINECOUNT=3;
+    private static final int TEXTSIZE=17;
+    private View getChannelDialogView() {
+        ScrollView scrollView= (ScrollView) LayoutInflater.from(this).inflate(R.layout.my_channel_choose,null);
+        GridView channelshowLayout=scrollView.findViewById(R.id.channel_show_layout);
+        GridView channelchooseLayout=scrollView.findViewById(R.id.channel_choose_layout);
+
+        final TextView channelLock=scrollView.findViewById(R.id.changeChannelliebiao);
+        if(changChannelForShowLock)
+        {
+            channelLock.setTextColor(getResources().getColor(R.color.red));
+        }
+        else
+        {
+            channelLock.setTextColor(getResources().getColor(R.color.colorPrimary));
+        }
+        channelLock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changChannelForShowLock=!changChannelForShowLock;
+                if(changChannelForShowLock)
+                {
+                    channelLock.setTextColor(getResources().getColor(R.color.red));
+                }
+                else
+                {
+                    channelLock.setTextColor(getResources().getColor(R.color.colorPrimary));
+                }
             }
         });
 
+        final ChannelGrideViewAdapter adapter=new ChannelGrideViewAdapter(channelListForRecycler,true);
+        channelshowLayout.setAdapter(adapter);
+
+        final ChannelGrideViewAdapter adapter1=new ChannelGrideViewAdapter(channelListForUnChoosed,false);
+        channelchooseLayout.setAdapter(adapter1);
+
+        channelshowLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if(changChannelForShowLock)
+                {
+                    return;
+                }
+                //第一个推荐不能移除
+                if(i==0)
+                {
+                    return;
+                }
+                channelListForUnChoosed.add(channelListForRecycler.get(i));
+                channelListForRecycler.remove(i);
+                adapter.notifyDataSetChanged();
+                adapter1.notifyDataSetChanged();
+                updateChannelUI();
+                //频道列表被修改
+                isChangeChannelForShow=true;
+            }
+        });
+
+        channelchooseLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if(changChannelForShowLock)
+                {
+                    return;
+                }
+                channelListForRecycler.add(channelListForUnChoosed.get(i));
+                channelListForUnChoosed.remove(i);
+                adapter.notifyDataSetChanged();
+                adapter1.notifyDataSetChanged();
+                updateChannelUI();
+                //频道列表被修改
+                isChangeChannelForShow=true;
+            }
+        });
+        return scrollView;
     }
-
-
-
-
-
-
-    private static final int LINECOUNT=3;
-    private View getChannelDialogView()
-    {
-        ScrollView linearLayout= (ScrollView) LayoutInflater.from(this).inflate(R.layout.channel_choose,null);
-        LinearLayout channelshowLayout=linearLayout.findViewById(R.id.channel_show_layout);
-        LinearLayout channelchooseLayout=linearLayout.findViewById(R.id.channel_choose_layout);
-        int i=0;
-        int count=0;
-        LinearLayout.LayoutParams params=
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,1);
-        while(i<channelListForRecycler.size())
+    public class ChannelGrideViewAdapter extends BaseAdapter{
+        List<Channel> list;
+        boolean isForShow;
+        ChannelGrideViewAdapter(List<Channel> l,boolean is)
         {
-            LinearLayout layout=new LinearLayout(MainActivity.this);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setLayoutParams(params);
-            for(count=0;count<LINECOUNT&&i<channelListForRecycler.size();count++,i++)
-            {
-                TextView textView=new TextView(MainActivity.this);
-                textView.setText(channelListForRecycler.get(i).getName());
-                textView.setLayoutParams(params);
-                textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                textView.setTextSize(15);
-                layout.addView(textView);
-            }
-            for(;count<LINECOUNT;count++)
-            {
-
-                TextView textView=new TextView(MainActivity.this);
-                textView.setTextSize(15);
-                textView.setLayoutParams(params);
-                textView.setVisibility(View.INVISIBLE);
-                textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                layout.addView(textView);
-            }
-            channelshowLayout.addView(layout);
+            list = l;
+            isForShow = is;
         }
 
-
-        i=0;
-        count=0;
-        while(i<channelListForUnChoosed.size())
-        {
-            LinearLayout layout=new LinearLayout(MainActivity.this);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setLayoutParams(params);
-            for(count=0;count<LINECOUNT&&i<channelListForUnChoosed.size();count++,i++)
-            {
-                TextView textView=new TextView(MainActivity.this);
-                textView.setText(channelListForUnChoosed.get(i).getName());
-                textView.setLayoutParams(params);
-                textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                textView.setTextSize(15);
-                layout.addView(textView);
-            }
-            for(;count<LINECOUNT;count++)
-            {
-                TextView textView=new TextView(MainActivity.this);
-                textView.setLayoutParams(params);
-                textView.setTextSize(15);
-                textView.setVisibility(View.INVISIBLE);
-                textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-                layout.addView(textView);
-            }
-            channelchooseLayout.addView(layout);
+        @Override
+        public int getCount() {
+            return list.size();
         }
 
-        return linearLayout;
+        @Override
+        public Object getItem(int i) {
+            return i;
+        }
 
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            TextView textView=new TextView(MainActivity.this);
+            textView.setText(list.get(i).getName());
+            textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            textView.setTextSize(TEXTSIZE);
+            return textView;
+        }
     }
-
 
 }

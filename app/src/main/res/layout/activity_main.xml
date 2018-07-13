@@ -28,6 +28,8 @@
                 android:layout_height="40dp"
                 />
             <LinearLayout
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:layout_gravity="center"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="10dp"
@@ -42,10 +44,15 @@
                     android:background="@drawable/search"
                     android:layout_width="27dp"
                     android:layout_height="27dp" />
-                <TextView
+                <EditText
+                    android:background="@null"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"
+                    android:id="@+id/editView"
+                    android:maxLines="1"
                     android:layout_gravity="center"
                     android:gravity="center|left"
-                    android:text="王生兰返回火星"
+                    android:hint="搜索新闻"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     />
@@ -85,6 +92,7 @@
             android:layout_height="26dp"
             android:id="@+id/imageView" />
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -92,11 +100,16 @@
             android:layout_width="match_parent"
             android:id="@+id/swip_refresh"
             android:layout_height="match_parent"
-            ></android.support.v4.widget.SwipeRefreshLayout>
-
+            >
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/news_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
         <FrameLayout
             android:visibility="gone"
-            android:id="@+id/xialajindutiao"
+            android:id="@+id/jiazaijindutiao"
             android:layout_gravity="bottom|center"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -111,15 +124,6 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 />
-            </FrameLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/news_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
-
+        </FrameLayout>
     </FrameLayout>
-
-
 </LinearLayout>

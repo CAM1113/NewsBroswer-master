@@ -116,5 +116,4 @@ public class NewsAdapter extends RecyclerView.Adapter <NewsAdapter.ViewHolder>{
         }
     }
 
-
 }

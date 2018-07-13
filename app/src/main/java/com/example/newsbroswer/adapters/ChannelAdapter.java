@@ -94,10 +94,22 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.ViewHold
     }
 
 
+    public void setFirstTrue()
+    {
+        for(int i=0;i<isClicks.size();i++)
+        {
+            isClicks.set(i,false);
+        }
+        isClicks.set(0,true);
+    }
 
-
-
-
-
+    public void setTrue(int position)
+    {
+        for(int i=0;i<isClicks.size();i++)
+        {
+            isClicks.set(i,false);
+        }
+        isClicks.set(position,true);
+    }
 
 }
