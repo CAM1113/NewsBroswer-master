@@ -1,6 +1,8 @@
 package com.example.newsbroswer;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -35,12 +37,14 @@ import android.widget.Toast;
 import com.example.newsbroswer.adapters.ChannelAdapter;
 import com.example.newsbroswer.adapters.NewsAdapter;
 import com.example.newsbroswer.beans.channel.Channel;
+import com.example.newsbroswer.beans.database_beans.DBChannel;
 import com.example.newsbroswer.beans.news.News;
 import com.example.newsbroswer.beans.news.news_config.NewsConfig;
 import com.example.newsbroswer.interfaces.OnChannelClickListener;
 import com.example.newsbroswer.interfaces.OnNewsClickListener;
 import com.example.newsbroswer.interfaces.RequestChannelsOverListener;
 import com.example.newsbroswer.interfaces.RequestNewsOverListener;
+import com.example.newsbroswer.utils.DataBaseUtil;
 import com.example.newsbroswer.utils.StaticFinalValues;
 import com.example.newsbroswer.utils.Utils;
 
@@ -80,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //初始化数据库帮助类
+        dbutil=new DataBaseUtil(this,"NewsBroswer",null,StaticFinalValues.DB_VERSION);
+        db=dbutil.getWritableDatabase();
         //设置新的actionbar
         Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -279,13 +287,24 @@ public class MainActivity extends AppCompatActivity {
             if(cList==null||cList.size()==0)
                 return;
             int num=cList.size();
+
+            //频道获取成功后，要将列表的初始形态也放到数据库缓存中
+            List<DBChannel> list=new ArrayList<>();
             //前一半放到列表中展示，后一半保留
-            for(int i=num-1;i>=num/2;i--)
+            int icount;
+            for(icount=num-1;icount>=num/2;icount--)
             {
-                channelListForRecycler.add(cList.get(i));
-                cList.remove(i);
+                Channel c=cList.get(icount);
+                channelListForRecycler.add(c);
+                list.add(new DBChannel(c.channelId,c.channelNames,StaticFinalValues.DBCHANNEL_FOR_SHOW));
             }
-            channelListForUnChoosed.addAll(cList);
+            for(;icount>=0;icount--)
+            {
+                Channel c=cList.get(icount);
+                channelListForUnChoosed.add(c);
+                list.add(new DBChannel(c.channelId,c.channelNames,StaticFinalValues.DBCHANNEL_FOR_UNSHOW));
+            }
+            DBChannel.storeAllChannel(db,list);
             //发送消息，更新频道列表
             handler.sendEmptyMessage(UPDATE_CHANNELS);
         }
@@ -294,11 +313,38 @@ public class MainActivity extends AppCompatActivity {
             Log.e("CAM",errorInfo+"    "+errorCode);
         }
     };
+
+    DataBaseUtil dbutil;
+    SQLiteDatabase db;
     //初始化频道
     private void initChannels()
     {
+        List<DBChannel> list=DBChannel.getAllChannel(db);
+        if(list.size()==0)
+        {
+            //数据库中没有数据，从网络中获取
+            Utils.getChannels(channelsOverListener);
+        }
+        else
+        {
+            //数据库中有数据，从数据库中获取
+            for(DBChannel channel:list)
+            {
+                if(channel.isShow()==1)
+                {
+                    channelListForRecycler.add(new Channel(channel.getChannelId(),channel.getChannelNames()));
+                }else
+                {
+                    channelListForUnChoosed.add(new Channel(channel.getChannelId(),channel.getChannelNames()));
+                }
+                Log.e("CAM",channel.getChannelNames());
+            }
+            updateChannelUI();
+        }
+
+
+
         //从网络上获取频道信息
-        Utils.getChannels(channelsOverListener);
     }
 
 
@@ -329,7 +375,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         //根据用户的输入，改变titleNow的值
         edittextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -348,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     //记录打开频道修改对话框后，是否修改了频道列表
     private boolean isChangeChannelForShow=false;
@@ -380,12 +424,30 @@ public class MainActivity extends AppCompatActivity {
                             public void onDismiss(DialogInterface dialogInterface) {
                                //锁住修改锁，下次打开必须解锁才能修改
                                 changChannelForShowLock=true;
+                                //判断频道列表是否被修改过
                                 if(isChangeChannelForShow)
                                 {
                                     isChangeChannelForShow=false;
                                     channelAdapter.setFirstTrue();
                                     channelAdapter.notifyDataSetChanged();
                                     channelNow="";
+                                    //将改变存到数据库的缓存中
+                                    List<DBChannel> list=new ArrayList<DBChannel>();
+                                    for(Channel channel:channelListForRecycler)
+                                    {
+                                        if(channel.channelId.equals(""))
+                                        {
+                                            //不存第一项推荐
+                                            continue;
+                                        }
+                                        list.add(new DBChannel(channel.channelId,channel.channelNames,1));
+                                    }
+                                    for(Channel channel:channelListForUnChoosed)
+                                    {
+                                        list.add(new DBChannel(channel.channelId,channel.channelNames,0));
+                                    }
+                                     DBChannel.storeAllChannel(db,list);
+                                    //初始化新闻列表
                                     initNews(new NewsConfig("",channelNow,titleNow,"",""));
                                 }
                             }
@@ -523,5 +585,4 @@ public class MainActivity extends AppCompatActivity {
             return textView;
         }
     }
-
 }

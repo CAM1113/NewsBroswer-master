@@ -38,7 +38,6 @@ public class AutoFitTextView extends TextView {
             case 6:setTextSize(13);break;
                 default:;setTextSize(10);break;
         }
-
         super.setText(text, type);
     }
 }
