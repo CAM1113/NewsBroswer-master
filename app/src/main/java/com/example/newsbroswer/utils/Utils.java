@@ -2,6 +2,7 @@ package com.example.newsbroswer.utils;
 
 import android.util.Log;
 
+import com.example.newsbroswer.beans.channel.Channel;
 import com.example.newsbroswer.beans.channel.ChannelRequest;
 import com.example.newsbroswer.beans.news.News;
 import com.example.newsbroswer.beans.news.NewsRequest;
@@ -140,7 +141,15 @@ public class Utils {
                 ChannelRequest channelRequest =gson.fromJson(res,ChannelRequest.class);
                 if(channelRequest.showapi_res_code==0)
                 {
-                    listener.onSuccess(channelRequest.getShowapi_res_body().channelList);
+                    List<Channel> list=channelRequest.getShowapi_res_body().channelList;
+                    for(int i=list.size()-1;i>=0;i--)
+                    {
+                        if(list.get(i).channelNames.length()!=4)
+                        {
+                            list.remove(i);
+                        }
+                    }
+                    listener.onSuccess(list);
 
                 }else
                 {

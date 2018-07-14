@@ -59,11 +59,11 @@
             </LinearLayout>
             <ImageView
                 android:layout_marginRight="10dp"
-                android:src="@drawable/refresh_pic"
                 android:layout_gravity="left|center"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:id="@+id/refreshNews" />
+                android:id="@+id/refreshNews"
+                app:srcCompat="@android:drawable/ic_popup_sync" />
         </LinearLayout>
         </android.support.v7.widget.Toolbar>
 

@@ -1,17 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_new_show"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.newsbroswer.NewShowActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/backImageView"
+                android:scaleType="center"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="?android:attr/actionModeCloseDrawable" />
+            <TextView
+                android:id="@+id/title_news_show"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="新闻频道"
+                android:textSize="18sp"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:paddingRight="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_gravity="right"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="?android:attr/actionModeShareDrawable" />
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+
+
+    <!--
+    <fragment
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:name="android.webkit.WebViewFragment" />
+    -->
     <WebView
         android:id="@+id/webViewShowNews"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_weight="1"
+        android:layout_height="0dp">
     </WebView>
-</RelativeLayout>
+
+    <LinearLayout
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:id="@+id/evalution_textView"
+            android:layout_gravity="center"
+            android:maxLines="1"
+            android:layout_marginLeft="5dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:hint="添加评论...."
+            android:layout_height="38dp"
+            android:background="@drawable/bg_searchview"
+            />
+
+        <Button
+            android:visibility="gone"
+            android:layout_margin="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发布"
+            android:textColor="#dd6f6363"
+            android:textSize="18sp"
+            android:id="@+id/fabu_button" />
+
+        <ImageView
+            android:visibility="visible"
+            android:layout_marginTop="2dp"
+            android:layout_gravity="center"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@android:drawable/sym_action_chat"
+            android:id="@+id/show_evalution_imageView"
+            android:layout_weight="0.02" />
+
+        <ImageView
+            android:id="@+id/shouchang_imageView"
+            android:visibility="visible"
+            android:layout_margin="2dp"
+            android:layout_gravity="center"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:srcCompat="@android:drawable/btn_star" />
+    </LinearLayout>
+</LinearLayout>

@@ -50,6 +50,10 @@ import com.example.newsbroswer.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.newsbroswer.utils.StaticFinalValues.NEWS_INTENT_CHANNEL_NAME;
+import static com.example.newsbroswer.utils.StaticFinalValues.NEWS_INTENT_TITLE;
+
 public class MainActivity extends AppCompatActivity {
     List<News> newsList =new ArrayList<>();
     List<Channel> channelListForRecycler = new ArrayList<>();
@@ -137,7 +141,22 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent=new Intent(MainActivity.this,NewShowActivity.class);
                 //新闻界面可能用link连接打开，也可能直接显示html文档
                 intent.putExtra(StaticFinalValues.NEWS_INTENE_LINK,news.link);
-                intent.putExtra(StaticFinalValues.NEWS_INTENT_HTML,news.html);
+                String htmls="<h2>"+news.title+"</h2>"
+                        +"&nbsp;&nbsp;"+news.source+"&nbsp;&nbsp;&nbsp;"+news.getPubDate()+"</br>"
+                        +news.html;
+                intent.putExtra(StaticFinalValues.NEWS_INTENT_HTML,htmls);
+                intent.putExtra(NEWS_INTENT_TITLE,news.title);
+
+                //将频道名称放入intent，如果频道名称是"",放入名称为推荐
+                if(channelNow.equals(""))
+                {
+                    intent.putExtra(NEWS_INTENT_CHANNEL_NAME,"推荐");
+                }
+                else
+                {
+                    intent.putExtra(NEWS_INTENT_CHANNEL_NAME,channelNow);
+                }
+
                 startActivity(intent);
             }
         });
@@ -580,8 +599,9 @@ public class MainActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             TextView textView=new TextView(MainActivity.this);
             textView.setText(list.get(i).getName());
-            textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            textView.setGravity(Gravity.CENTER);
             textView.setTextSize(TEXTSIZE);
+            //textView.setBackground(getResources().getDrawable(R.drawable.bg_searchview));
             return textView;
         }
     }
