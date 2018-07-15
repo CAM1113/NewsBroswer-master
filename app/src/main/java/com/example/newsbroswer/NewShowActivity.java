@@ -131,7 +131,7 @@ public class NewShowActivity extends AppCompatActivity {
                 NewShowActivity.this.finish();
             }
         });
-        channelName= (TextView) findViewById(R.id.title_news_show);
+        channelName= (TextView) findViewById(R.id.denglutixing_Title);
         channelName.setText(getIntent().getStringExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_NAME));
 
     }

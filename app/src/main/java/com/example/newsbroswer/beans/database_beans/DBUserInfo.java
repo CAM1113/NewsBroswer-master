@@ -1,18 +1,34 @@
 package com.example.newsbroswer.beans.database_beans;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.google.gson.annotations.SerializedName;
+
+import static com.example.newsbroswer.utils.StaticFinalValues.DBUSERINFO_FOR_LOGIN;
+
 /**
  * Created by 王灿 on 2018/7/13.
  */
 
 public class DBUserInfo {
+    @SerializedName("name")
     private String  name="";
+
+    @SerializedName("nickname")
     private String nickname="";
+
+    @SerializedName("password")
     private String password="";
+
+    @SerializedName("sex")
     private String sex="";
+
+    @SerializedName("profilePicture")
     private String profilePicture="";
+
+
     private int isLogin=0;
-
-
     public String getName() {
         return name;
     }
@@ -70,5 +86,24 @@ public class DBUserInfo {
         this.sex = sex;
         this.profilePicture = profilePicture;
         this.isLogin = isLogin;
+    }
+
+
+    private static final String LoginUserInDB_SQL="select * from DBUserInfo where isLogin = "+DBUSERINFO_FOR_LOGIN;
+    public static DBUserInfo getLoginUserInDB(SQLiteDatabase db)
+    {
+        DBUserInfo userInfo=null;
+        Cursor cursor=db.rawQuery(LoginUserInDB_SQL,null);
+        if(cursor.moveToFirst())
+        {
+            String  name=cursor.getString(cursor.getColumnIndex("name"));
+            String nickname=cursor.getString(cursor.getColumnIndex("nickname"));
+            String password=cursor.getString(cursor.getColumnIndex("password"));
+            String sex=cursor.getString(cursor.getColumnIndex("sex"));
+            String profilePicture=cursor.getString(cursor.getColumnIndex("profilePicture"));
+            int isLogin=cursor.getInt(cursor.getColumnIndex("isLogin"));
+            userInfo=new DBUserInfo(name,nickname,password,sex,profilePicture,isLogin);
+        }
+        return userInfo;
     }
 }

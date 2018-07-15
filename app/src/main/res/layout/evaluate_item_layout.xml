@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#61dbdbdb"
+    android:orientation="vertical"
+    android:layout_marginLeft="6dp"
+    android:layout_marginRight="6dp"
+    >
+    <LinearLayout
+        android:gravity="center"
+        android:background="#fdf8f8"
+        android:layout_margin="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_View1"
+            android:src="@drawable/ic"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="2" />
+        <TextView
+            android:id="@+id/text_View1"
+            android:layout_marginLeft="5dp"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="50dp"
+            android:text="DreamCatcher"
+            android:textSize="20sp"
+            android:gravity="center|left"
+            />
+        <ImageView
+            android:id="@+id/image_View2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="20sp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/dianzan" />
+
+        <TextView
+            android:id="@+id/text_View2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="点赞99次"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_View3"
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="#fdf8f8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="       我需要三件东西：爱情友谊和图书。然而这三者之间何其相通！炽热的爱情可以充实图书的内容，图书又是人们最忠实的朋友。 —— 蒙田"
+            android:textColor="#05113b"
+            android:textSize="15sp"
+            />
+
+    <LinearLayout
+        android:layout_marginTop="1dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="#fdf8f8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/text_View4"
+            android:gravity="right"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="wrap_content"
+            android:text="2018-07-14"
+            android:textColor="#0c139a"
+            android:textSize="15dp"
+            />
+
+    </LinearLayout>
+</LinearLayout>

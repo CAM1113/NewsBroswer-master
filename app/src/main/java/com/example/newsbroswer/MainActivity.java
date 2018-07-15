@@ -93,10 +93,9 @@ public class MainActivity extends AppCompatActivity {
         dbutil=new DataBaseUtil(this,"NewsBroswer",null,StaticFinalValues.DB_VERSION);
         db=dbutil.getWritableDatabase();
         //设置新的actionbar
-        Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initToolBar();
         initImageViews();
-        initTextViewForSearch();
+
         //设置频道的RecyclerView
         channelListForRecycler.add(new Channel("","推荐"));//设置推荐频道
         channelNow="";//推荐频道的频道名为“”
@@ -172,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                         lastVisibleItem + 1 == newsAdapter.getItemCount() &&
                         !isGettingNews) {
                     //上拉加载的事件处理
+                    isGettingNews=true;
                     frameLayoutForJiaZai.setVisibility(View.VISIBLE);
                     moreNews(new NewsConfig("",channelNow,titleNow,""+pageNow,""));
                     }
@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
         initChannels();
         //获取新闻列表
         initNews(new NewsConfig("",channelNow,titleNow,pageNow+"",""));
-
     }
 
     //异步消息通信，当网络请求结束后，更新页面
@@ -237,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this,"频道列表为空",Toast.LENGTH_LONG).show();
                         return;
                     }
+                    channelAdapter.setFirstTrue();
                     channelAdapter.notifyDataSetChanged();
                     break;
                 case NO_MORE_NEWS:
@@ -311,6 +311,13 @@ public class MainActivity extends AppCompatActivity {
             List<DBChannel> list=new ArrayList<>();
             //前一半放到列表中展示，后一半保留
             int icount;
+            //从网络获取频道后，所有和频道相关的控件全部重置
+            channelListForRecycler.clear();
+            channelListForRecycler.add(new Channel("","推荐"));
+            channelNow="";
+            channelListForUnChoosed.clear();
+
+
             for(icount=num-1;icount>=num/2;icount--)
             {
                 Channel c=cList.get(icount);
@@ -323,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
                 channelListForUnChoosed.add(c);
                 list.add(new DBChannel(c.channelId,c.channelNames,StaticFinalValues.DBCHANNEL_FOR_UNSHOW));
             }
+
             DBChannel.storeAllChannel(db,list);
             //发送消息，更新频道列表
             handler.sendEmptyMessage(UPDATE_CHANNELS);
@@ -360,78 +368,13 @@ public class MainActivity extends AppCompatActivity {
             }
             updateChannelUI();
         }
-
-
-
         //从网络上获取频道信息
-    }
-
-
-    private void initTextViewForSearch()
-    {
-        final EditText edittextSearch= (EditText) findViewById(R.id.editView);
-        edittextSearch.setText("");
-        titleNow="";
-        //用户点击搜索，开始查找新的新闻
-        edittextSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    // 先隐藏键盘
-                    ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
-                            .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus()
-                                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    //进行搜索操作的方法，在该方法中可以加入mEditSearchUser的非空判断
-                    titleNow=edittextSearch.getText()+"";
-                    pageNow=1;
-                    channelNow="";
-                    channelAdapter.setFirstTrue();
-                    channelAdapter.notifyDataSetChanged();
-                    initNews(new NewsConfig("",channelNow,titleNow,pageNow+"",""));
-                }
-                return false;
-            }
-        });
-
-        //根据用户的输入，改变titleNow的值
-        edittextSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                titleNow=edittextSearch.getText()+"";
-            }
-        });
     }
 
     //记录打开频道修改对话框后，是否修改了频道列表
     private boolean isChangeChannelForShow=false;
     private void initImageViews()
     {
-        //点击刷新的控件
-        ImageView refreshImageView= (ImageView) findViewById(R.id.refreshNews);
-        refreshImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //刷新图片的点击事件，如果正在获取新闻，则不允许刷新
-                if(!isGettingNews)
-                {
-                    refreshLayout.setRefreshing(true);
-                    initNews(new NewsConfig("",channelNow,"","",""));
-                }
-
-            }
-        });
-
         ImageView channelSetImageView= (ImageView) findViewById(R.id.imageView);
         channelSetImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -605,4 +548,85 @@ public class MainActivity extends AppCompatActivity {
             return textView;
         }
     }
+
+    private void initToolBar()
+    {
+        Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //用户管理ImageView
+        ImageView userInfo_imageView= (ImageView) findViewById(R.id.userInfo_imageView);
+        userInfo_imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,UserInfoManagerActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //点击刷新的控件
+        ImageView refreshImageView= (ImageView) findViewById(R.id.refreshNews);
+        refreshImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //刷新图片的点击事件，如果正在获取新闻，则不允许刷新
+                if(!isGettingNews)
+                {
+                    Utils.getChannels(channelsOverListener);
+                    refreshLayout.setRefreshing(true);
+                    initNews(new NewsConfig("",channelNow,"","",""));
+                }
+
+            }
+        });
+        //设置搜索框
+        initTextViewForSearch();
+    }
+    private void initTextViewForSearch()
+    {
+        final EditText edittextSearch= (EditText) findViewById(R.id.editView);
+        edittextSearch.setText("");
+        titleNow="";
+        //用户点击搜索，开始查找新的新闻
+        edittextSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    // 先隐藏键盘
+                    ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+                            .hideSoftInputFromWindow(MainActivity.this.getCurrentFocus()
+                                    .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    //进行搜索操作的方法，在该方法中可以加入mEditSearchUser的非空判断
+                    titleNow=edittextSearch.getText()+"";
+                    pageNow=1;
+                    channelNow="";
+                    channelAdapter.setFirstTrue();
+                    channelAdapter.notifyDataSetChanged();
+                    initNews(new NewsConfig("",channelNow,titleNow,pageNow+"",""));
+                }
+                return false;
+            }
+        });
+        //根据用户的输入，改变titleNow的值
+        edittextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                titleNow=edittextSearch.getText()+"";
+            }
+        });
+    }
+
+
+
 }

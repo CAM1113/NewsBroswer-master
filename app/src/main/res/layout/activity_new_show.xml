@@ -23,7 +23,7 @@
                 android:layout_height="30dp"
                 app:srcCompat="?android:attr/actionModeCloseDrawable" />
             <TextView
-                android:id="@+id/title_news_show"
+                android:id="@+id/denglutixing_Title"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="新闻频道"
@@ -93,8 +93,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             app:srcCompat="@android:drawable/sym_action_chat"
-            android:id="@+id/show_evalution_imageView"
-            android:layout_weight="0.02" />
+            android:id="@+id/show_evalution_imageView" />
 
         <ImageView
             android:id="@+id/shouchang_imageView"
@@ -103,6 +102,6 @@
             android:layout_gravity="center"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:srcCompat="@android:drawable/btn_star" />
-    </LinearLayout>
+            android:src="@drawable/shoucang1"/>
+     </LinearLayout>
 </LinearLayout>

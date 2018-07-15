@@ -12,7 +12,14 @@ import com.example.newsbroswer.interfaces.RequestNewsOverListener;
 import com.google.gson.Gson;
 import com.show.api.ShowApiRequest;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.util.List;
 
@@ -195,4 +202,63 @@ public class Utils {
             throw new Exception("MD5加密出现错误");
         }
     }
+
+
+    /**
+     * 参数：URL,请求方式
+    * */
+    public static String sendHttpRequest(String urlStr,String requestMethod,String params)
+    {
+        HttpURLConnection connection=null;
+        BufferedReader reader=null;
+        try
+        {
+            URL url = new URL(urlStr);
+            connection= (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(requestMethod);
+            connection.setReadTimeout(8000);
+            connection.setConnectTimeout(8000);
+            //如果是POST方式请求数据，利用输出流传递参数
+            if(params!=null)
+            {
+                DataOutputStream dos=new DataOutputStream(connection.getOutputStream());
+               // "username=ewenlai&password=mimimi123"
+                dos.writeBytes(params);
+            }
+
+            InputStream ins=connection.getInputStream();
+            reader=new BufferedReader(new InputStreamReader(ins));
+            StringBuilder builder=new StringBuilder();
+            String line;
+            while((line=reader.readLine())!=null)
+            {
+                builder.append(line);
+            }
+            return builder.toString();
+        }catch (Exception e)
+        {
+            Log.e("CAM",e.getMessage());
+        }
+        finally {
+            if(reader!=null)
+            {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Log.e("CAM",e.getMessage());
+                }
+            }
+            if(connection!=null)
+            {
+                connection.disconnect();
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
 }
