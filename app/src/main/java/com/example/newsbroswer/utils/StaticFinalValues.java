@@ -22,9 +22,16 @@ public class StaticFinalValues {
     public static final int DBUSERINFO_FOR_UNLOGIN=0;
 
     //连接后台的url
-    public static final String NEWS_URL="http://10.55.160.144:10280/";
+    public static final String NEWS_URL="http://10.55.160.72:10280/";
 
     public static final String DEFAULT_TOUXIANG="static/upload/monkey.jpg";
+
+
+
+    public static final int LOGIN_RESULT_SUCCESS=0;
+    public static final int LOGIN_RESULT_FAIL=1;
+
+
 
 
 }

@@ -15,9 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.newsbroswer.beans.UserLoginJson;
@@ -36,6 +39,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import com.example.newsbroswer.utils.StaticFinalValues;
 
 public class UserInfoManagerActivity extends AppCompatActivity {
 
@@ -122,41 +126,65 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     //登陆对话框
     private AlertDialog loginDialog;
     //异步消息处理，登陆注册网络请求耗时
-    private static final int SUCCESS=0;
+    private static final int LOGIN_SUCCESS=0;
+    private static final int LOGIN_FAIL=1;
+    private static final int NET_ERROR=2;
     Handler handler=new Handler()
     {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            DBUserInfo userInfo=result.getData();
-            Log.e("CAM",result.getData().getName());
-            Log.e("CAM",result.getData().getNickname());
-            Log.e("CAM",result.getData().getPassword());
-            Log.e("CAM",result.getData().getProfilePicture());
-            Log.e("CAM",result.getData().getSex());
-            Log.e("CAM",result.getData().getLogin()+"");
-
+            switch (msg.what)
+            {
+                case LOGIN_SUCCESS:
+                    logSuccess();
+                    break;
+                case LOGIN_FAIL:
+                    logFail();
+                    break;
+                case NET_ERROR:
+                    netError();
+                    break;
+            }
         }
     };
-
-
-
+    private void logSuccess()
+    {
+        login_ProgressBar.setVisibility(View.GONE);
+        DBUserInfo.storeLoginUserInDB(db,userInfo);
+        initToolBar();
+    }
+    private void logFail()
+    {
+        Toast.makeText(UserInfoManagerActivity.this,"账号或密码错误登陆失败",Toast.LENGTH_LONG).show();
+        userInfo=null;
+        login_ProgressBar.setVisibility(View.GONE);
+    }
+    private void netError()
+    {
+        Toast.makeText(UserInfoManagerActivity.this,"网络错误",Toast.LENGTH_LONG).show();
+        userInfo=null;
+        login_ProgressBar.setVisibility(View.GONE);
+    }
 
     //登陆的用户名和密码
     String userName="";
     String password="";
+    ProgressBar login_ProgressBar;
+    CheckBox checkBox;
     private void showDengLuDialog()
     {
         View view= LayoutInflater.from(UserInfoManagerActivity.this).inflate(R.layout.login_layout,null);
         Button logBtn=view.findViewById(R.id.login_button);
-        EditText userNameTextView=view.findViewById(R.id.num_edit);
-        EditText passwordEditText=view.findViewById(R.id.pwd_edit);
-
-        userName=((userNameTextView.getText())+"").trim();
-        password=(passwordEditText.getText()+"").trim();
+        final EditText userNameTextView=view.findViewById(R.id.num_edit);
+        final EditText passwordEditText=view.findViewById(R.id.pwd_edit);
+        login_ProgressBar=view.findViewById(R.id.login_ProgressBar);
+        checkBox=view.findViewById(R.id.jizumima);
         logBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                userName=((userNameTextView.getText())+"").trim();
+                password=(passwordEditText.getText()+"").trim();
                 handlerLogin(userName,password);
             }
         });
@@ -166,7 +194,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
                         //对话框消失时的回调
-
                     }
                 })
                 .create();
@@ -178,21 +205,51 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         loginDialog.getWindow().setAttributes(params);
         loginDialog.getWindow().setGravity(Gravity.BOTTOM);//设置对话框打开位置
         loginDialog.getWindow().setContentView(view);//设置对话框界面
-
     }
 
 
-    UserLoginJson result=null;
-    private void handlerLogin(String n,String p)
+
+
+    private void handlerLogin(final String n, final String p)
     {
+        login_ProgressBar.setVisibility(View.VISIBLE);
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-                String s= Utils.sendHttpRequest("http://10.55.160.144:10280/user/login","POST","username=ewenlai&password=mimimi123");
+                UserLoginJson result=null;
+                String s= Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"user/login","POST","username="+n.trim()+"&password="+p.trim());
                 Gson gson=new Gson();
                 result= gson.fromJson(s,UserLoginJson.class);
-                handler.sendEmptyMessage(0x123);
+                if(result==null)
+                {
+                    //result==null,网络故障
+                    handler.sendEmptyMessage(NET_ERROR);
+                    return;
+                }
+
+                if(result.getCode()==StaticFinalValues.LOGIN_RESULT_SUCCESS)
+                {
+                    //登陆成功
+                    userInfo=result.getData();
+                    if(checkBox.isChecked())
+                    {
+                        userInfo.setPassword(p);
+                    }
+                    else
+                    {
+                        //没有记住密码，密码设置为空
+                        userInfo.setPassword("");
+                    }
+                    userInfo.setLogin(StaticFinalValues.DBUSERINFO_FOR_LOGIN);
+                    handler.sendEmptyMessage(LOGIN_SUCCESS);
+                    return;
+                }
+                if(result.getCode()==StaticFinalValues.LOGIN_RESULT_FAIL)
+                {
+                    //登陆失败
+                    handler.sendEmptyMessage(LOGIN_FAIL);
+                    return;
+                }
             }
         }).start();
 

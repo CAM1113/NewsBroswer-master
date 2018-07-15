@@ -104,6 +104,31 @@ public class DBUserInfo {
             int isLogin=cursor.getInt(cursor.getColumnIndex("isLogin"));
             userInfo=new DBUserInfo(name,nickname,password,sex,profilePicture,isLogin);
         }
+        cursor.close();
         return userInfo;
+    }
+
+
+    private static final String Get_User_By_NAME_SQL="select * from DBUserInfo where name = ";
+    private static final String Delete_User_By_Name_SQL="delete from DBUserInfo where name = ?";
+    public static void storeLoginUserInDB(SQLiteDatabase db,DBUserInfo userInfo)
+    {
+        String sql=Get_User_By_NAME_SQL+"'"+userInfo.getName()+"'";
+        Cursor cursor=db.rawQuery(sql,null);
+        if(cursor.moveToFirst())
+        {
+            //数据库中有记录，先删记录，在添加记录
+            db.execSQL(Delete_User_By_Name_SQL,new String[]{userInfo.getName()});
+        }
+        storeDBUserInfo(db,userInfo);
+        cursor.close();
+    }
+
+
+    private static final String Store_DBUserInfo="insert into DBUserInfo" +
+            "(name,nickname,password,sex,profilePicture,isLogin) values (?,?,?,?,?,?)";
+    public static void storeDBUserInfo(SQLiteDatabase db, DBUserInfo userInfo)
+    {
+        db.execSQL(Store_DBUserInfo,new String[]{userInfo.getName(),userInfo.getNickname(),userInfo.getPassword(),userInfo.getSex(),userInfo.getProfilePicture(),userInfo.getLogin()+""});
     }
 }
