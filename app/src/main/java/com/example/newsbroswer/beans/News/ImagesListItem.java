@@ -8,6 +8,13 @@ public class ImagesListItem {
 
     public String url;
 
+    public ImagesListItem(String url) {
+        this.url = url;
+    }
+
+    public ImagesListItem() {
+    }
+
     public String getUrl() {
         return url;
     }

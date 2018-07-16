@@ -17,6 +17,21 @@ public class News {
     public String link;
     public String html;
 
+    public News() {
+    }
+
+    public News(String pubDate, String channelName, String title, String desc, List<ImagesListItem> imageurls, String source, String channelId, String link, String html) {
+        this.pubDate = pubDate;
+        this.channelName = channelName;
+        this.title = title;
+        this.desc = desc;
+        this.imageurls = imageurls;
+        this.source = source;
+        this.channelId = channelId;
+        this.link = link;
+        this.html = html;
+    }
+
     public String getPubDate() {
         return pubDate;
     }

@@ -21,9 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.newsbroswer.beans.database_beans.DBShouChang;
 import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.beans.json_beans.EvalutionResult;
 import com.example.newsbroswer.beans.json_beans.RequestResult;
+import com.example.newsbroswer.beans.news.ImagesListItem;
+import com.example.newsbroswer.beans.news.News;
 import com.example.newsbroswer.fragments.NewsFragment;
 import com.example.newsbroswer.fragments.ShowEvalutionFragment;
 import com.example.newsbroswer.utils.DataBaseUtil;
@@ -44,10 +48,11 @@ public class NewShowActivity extends AppCompatActivity {
 
     DBUserInfo userInfo=null;
     SQLiteDatabase db=null;
-    String newsURL;
-    String htmls=null;
+    News newsNow=null;
     NewsFragment webViewFragment;
     ShowEvalutionFragment evalutionFragment;
+    String htmls;
+    String newsURL=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +62,36 @@ public class NewShowActivity extends AppCompatActivity {
         userInfo=DBUserInfo.getLoginUserInDB(db);
 
         Intent intent = getIntent();
-        newsURL = intent.getStringExtra(StaticFinalValues.NEWS_INTENE_LINK);
+        String title=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_TITLE);
+        String channelName=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_NAME);
+        String desc=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_DESC);
+        String imageViewStr1=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_IMAGEURL1);
+        String imageViewStr2=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_IMAGEURL2);
+        String imageViewStr3=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_IMAGEURL3);
+        String source=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_SOURCE);
+        String channelId=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID);
+        String link = intent.getStringExtra(StaticFinalValues.NEWS_INTENE_LINK);
+        newsURL=link;
+        String pubDate=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_PUBLICDATE);
         String html=intent.getStringExtra(StaticFinalValues.NEWS_INTENT_HTML);
-        htmls=getNewContent(html);
+        htmls=getNewContent("<h2>"+title+"</h2>"
+                +"&nbsp;&nbsp;"+source+"&nbsp;&nbsp;&nbsp;"+pubDate+"</br>"+html);
+
+        List<ImagesListItem> imageurls=new ArrayList<>();
+        if(imageViewStr1!=null&&!imageViewStr1.equals(""))
+        {
+            imageurls.add(new ImagesListItem(imageViewStr1));
+        }
+        if(imageViewStr2!=null&&!imageViewStr2.equals(""))
+        {
+            imageurls.add(new ImagesListItem(imageViewStr2));
+        }
+        if(imageViewStr3!=null&&!imageViewStr3.equals(""))
+        {
+            imageurls.add(new ImagesListItem(imageViewStr3));
+        }
+
+        newsNow=new News(pubDate, channelName, title, desc, imageurls, source, channelId, link,html);
 
         initToolBar();
         initfoot();
@@ -83,6 +115,33 @@ public class NewShowActivity extends AppCompatActivity {
         souchangImageView= (ImageView) findViewById(R.id.shouchang_imageView);
         evalutionEditText= (EditText) findViewById(R.id.evalution_textView);
         chaKanImageView= (ImageView) findViewById(R.id.show_evalution_imageView);
+        if(userInfo==null)
+        {
+            Glide.with(this).load(R.drawable.bushoucang1).into(souchangImageView);
+        }
+        else if(DBShouChang.isShouChang(db,userInfo.getName(),newsNow.link))
+        {
+            Glide.with(this).load(R.drawable.shoucang1).into(souchangImageView);
+        }
+        else
+        {
+            Glide.with(this).load(R.drawable.bushoucang1).into(souchangImageView);
+        }
+        souchangImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(userInfo==null)
+                {
+                    Toast.makeText(NewShowActivity.this, "未登录不能收藏", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    handleShouChang(userInfo,newsNow );
+                }
+            }
+        });
+
+
 
         //点击查看的图片，获取评论
         chaKanImageView.setOnClickListener(new View.OnClickListener() {
@@ -149,7 +208,6 @@ public class NewShowActivity extends AppCompatActivity {
                                     .getCurrentFocus().getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);//关闭输入法;
         }
-        Log.e("CAM","11111");
     }
 
     private void setFootOnEvalution()
@@ -192,16 +250,6 @@ public class NewShowActivity extends AppCompatActivity {
         webViewFragment = new NewsFragment();
         replaceFragment(webViewFragment);
     }
-
-
-
-
-
-
-
-
-
-
 
     private static final int SEND_EVALUTION_SUCCESS=0;
     private static final int NET_ERROR=1;
@@ -300,22 +348,40 @@ public class NewShowActivity extends AppCompatActivity {
         evalutionFragment=null;
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        clearEditTextFocus();
-        return super.onTouchEvent(event);
-    }
+    private void handleShouChang(DBUserInfo userInfo, News news)
+    {
+        String title=news.title;
+        String channelName=news.channelName;
+        String desc=news.desc;
+        String source=news.source;
+        String channelId=news.getChannelId();
+        String link = news.link;
+        String pubDate=news.pubDate;
+        String html=news.html;
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e("CAM","onResume");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.e("CAM","onStart");
+        int i=0;
+        String [] imageurls=new String[3];
+        for(ImagesListItem ima:news.getImageurls())
+        {
+            imageurls[i]=ima.getUrl();
+            i++;
+        }
+        for(;i<3;i++)
+        {
+            imageurls[i]="";
+        }
+        if(DBShouChang.isShouChang(db,userInfo.getName(),link))
+        {
+            DBShouChang.cancalShouChang(db,userInfo.getName(),link);
+            Glide.with(this).load(R.drawable.bushoucang1).into(souchangImageView);
+        }
+        else
+        {
+            DBShouChang dbShouChang=new DBShouChang(userInfo.getName(), pubDate, channelName, title,
+                    desc, imageurls[0],imageurls[1], imageurls[2],  source,channelId,
+                    link,  html);
+            DBShouChang.storeDBShouChang(db,dbShouChang);
+            Glide.with(this).load(R.drawable.shoucang1).into(souchangImageView);
+        }
     }
 }

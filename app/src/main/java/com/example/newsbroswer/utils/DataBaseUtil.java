@@ -34,6 +34,12 @@ public class DataBaseUtil extends SQLiteOpenHelper {
             "newsURL text)";
 
 
+    public static final String CREATE_TABLE_SHOUCHANG="create table DBShouChang ( "+
+            "name text, pubDate text,channelName text,title text,desc text," +
+            "imageurls1 text,imageurls2 text,imageurls3 text,source text,channelId text," +
+            "link text,html,text)";
+
+
     private Context context;
 
 
@@ -53,6 +59,7 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_CHANNEL);
         sqLiteDatabase.execSQL(CREATE_TABLE_USERINFO);
         sqLiteDatabase.execSQL(CREATE_TABLE_DIANZAN);
+        sqLiteDatabase.execSQL(CREATE_TABLE_SHOUCHANG);
     }
 
     @Override
@@ -60,6 +67,8 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table if exists DBChannel");
         sqLiteDatabase.execSQL("drop table if exists DBUserInfo");
         sqLiteDatabase.execSQL("drop table if exists DBDianZan");
+        sqLiteDatabase.execSQL("drop table if exists DBShouChang");
+
         onCreate(sqLiteDatabase);
     }
 }
