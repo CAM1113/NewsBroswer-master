@@ -167,6 +167,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         Toast.makeText(UserInfoManagerActivity.this,"网络错误",Toast.LENGTH_LONG).show();
         userInfo=null;
         login_ProgressBar.setVisibility(View.GONE);
+        registerProgressBar.setVisibility(View.GONE);
     }
 
     private void registerFail()
@@ -263,20 +264,21 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             }
         });
 
-        TextView nameTextView=view.findViewById(R.id.text1);
-        TextView nickNameTextView=view.findViewById(R.id.text2);
-        TextView passwordTextView=view.findViewById(R.id.text3);
-        TextView confirmPasswordTextView=view.findViewById(R.id.text4);
+        final TextView nameTextView=view.findViewById(R.id.text1);
+        final TextView nickNameTextView=view.findViewById(R.id.text2);
+        final TextView passwordTextView=view.findViewById(R.id.text3);
+        final TextView confirmPasswordTextView=view.findViewById(R.id.text4);
 
-        final String name=nameTextView.getText()+"";
-        final String nickName=nickNameTextView.getText()+"";
-        final String pwd=passwordTextView.getText()+"";
-        final String cpwd=confirmPasswordTextView.getText()+"";
+
 
         Button registerButton=view.findViewById(R.id.register_button);
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final String name=nameTextView.getText()+"";
+                final String nickName=nickNameTextView.getText()+"";
+                final String pwd=passwordTextView.getText()+"";
+                final String cpwd=confirmPasswordTextView.getText()+"";
                 handlerRegister(name,nickName,pwd, cpwd);
             }
         });
@@ -364,7 +366,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String params="username="+name+"&password="+password+"&nickname="+nickName+"&sex="+"男";
+                String params="username="+name+"&password="+password+"&nickname="+nickName+"&sex="+"M";
                 String s=Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/user","POST",params);
                 if(s==null)
                 {
@@ -395,7 +397,4 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     {
         return true;
     }
-
-
-
 }
