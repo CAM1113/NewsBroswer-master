@@ -98,6 +98,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -111,8 +112,8 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:src="@drawable/bushoucang1"
-                android:layout_width="48dp"
-                android:layout_height="51dp" />
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
             <TextView
                 android:text="收藏"
                 android:layout_width="wrap_content"
@@ -127,10 +128,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-
                 android:src="@drawable/history"
-                android:layout_width="50dp"
-                android:layout_height="50dp" />
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
             <TextView
                 android:text="历史"
                 android:layout_width="wrap_content"
@@ -144,11 +144,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-                android:src="@drawable/bg_button"
-                android:layout_width="50dp"
-                android:layout_height="50dp" />
+
+                android:src="@drawable/pinglun"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
             <TextView
                 android:text="我的评论"
+                android:src="@drawable/pinglun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>

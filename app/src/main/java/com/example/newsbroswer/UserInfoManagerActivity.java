@@ -23,23 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.newsbroswer.beans.UserLoginJson;
+import com.example.newsbroswer.beans.json_beans.RequestResult;
+import com.example.newsbroswer.beans.json_beans.UserLoginJson;
 import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.utils.DataBaseUtil;
 import com.example.newsbroswer.utils.StaticFinalValues;
 import com.example.newsbroswer.utils.Utils;
 import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import com.example.newsbroswer.utils.StaticFinalValues;
 
 public class UserInfoManagerActivity extends AppCompatActivity {
 
@@ -96,7 +88,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         denglu_zuce_TextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDengLuDialog();
+                openLoginDialog();
             }
         });
 
@@ -126,9 +118,12 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     //登陆对话框
     private AlertDialog loginDialog;
     //异步消息处理，登陆注册网络请求耗时
-    private static final int LOGIN_SUCCESS=0;
-    private static final int LOGIN_FAIL=1;
-    private static final int NET_ERROR=2;
+    private static final int LOGIN_SUCCESS=-5;
+    private static final int LOGIN_FAIL=-4;
+    private static final int NET_ERROR=-3;
+    private static final int REGISTER_SUCCESS=-1;
+    private static final int REGISTER_FAIL=-2;
+
     Handler handler=new Handler()
     {
         @Override
@@ -142,6 +137,12 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                 case LOGIN_FAIL:
                     logFail();
                     break;
+                case REGISTER_FAIL:
+                    registerFail();
+                    break;
+                case REGISTER_SUCCESS:
+                    registerSuccess();
+                    break;
                 case NET_ERROR:
                     netError();
                     break;
@@ -153,6 +154,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         login_ProgressBar.setVisibility(View.GONE);
         DBUserInfo.storeLoginUserInDB(db,userInfo);
         initToolBar();
+        loginDialog.dismiss();
     }
     private void logFail()
     {
@@ -167,15 +169,53 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         login_ProgressBar.setVisibility(View.GONE);
     }
 
+    private void registerFail()
+    {
+        //登陆失败
+        registerProgressBar.setVisibility(View.GONE);
+        Toast.makeText(this, "该用户名已存在", Toast.LENGTH_SHORT).show();
+    }
+    private void registerSuccess()
+    {
+        //登录成功
+        registerProgressBar.setVisibility(View.GONE);
+        registerDialog.dismiss();
+        Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
+
+    }
+
+
+
+
+
     //登陆的用户名和密码
     String userName="";
     String password="";
     ProgressBar login_ProgressBar;
     CheckBox checkBox;
-    private void showDengLuDialog()
+    private void openLoginDialog()
     {
         View view= LayoutInflater.from(UserInfoManagerActivity.this).inflate(R.layout.login_layout,null);
         Button logBtn=view.findViewById(R.id.login_button);
+        //初始化退出按钮
+        ImageView dismissDialogImageView=view.findViewById(R.id.imageView4);
+        dismissDialogImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginDialog.dismiss();
+            }
+        });
+
+        //初始化注册按钮
+        TextView registerTextView=view.findViewById(R.id.register_TexiView);
+        registerTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openRegisterDialog();
+                loginDialog.hide();
+            }
+        });
+
         final EditText userNameTextView=view.findViewById(R.id.num_edit);
         final EditText passwordEditText=view.findViewById(R.id.pwd_edit);
         login_ProgressBar=view.findViewById(R.id.login_ProgressBar);
@@ -188,6 +228,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                 handlerLogin(userName,password);
             }
         });
+
         loginDialog =new AlertDialog.Builder(UserInfoManagerActivity.this,R.style.MyDialogStyle)
                 .setCancelable(true)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -208,6 +249,60 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     }
 
 
+    AlertDialog registerDialog;
+    private void openRegisterDialog()
+    {
+        View view= LayoutInflater.from(UserInfoManagerActivity.this).inflate(R.layout.register,null);
+
+        registerProgressBar=view.findViewById(R.id.register_ProgressBar);
+        ImageView cancalImageView=view.findViewById(R.id.imageView4);
+        cancalImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                registerDialog.dismiss();
+            }
+        });
+
+        TextView nameTextView=view.findViewById(R.id.text1);
+        TextView nickNameTextView=view.findViewById(R.id.text2);
+        TextView passwordTextView=view.findViewById(R.id.text3);
+        TextView confirmPasswordTextView=view.findViewById(R.id.text4);
+
+        final String name=nameTextView.getText()+"";
+        final String nickName=nickNameTextView.getText()+"";
+        final String pwd=passwordTextView.getText()+"";
+        final String cpwd=confirmPasswordTextView.getText()+"";
+
+        Button registerButton=view.findViewById(R.id.register_button);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handlerRegister(name,nickName,pwd, cpwd);
+            }
+        });
+
+
+        registerDialog =new AlertDialog.Builder(UserInfoManagerActivity.this,R.style.MyDialogStyle)
+                .setCancelable(true)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        loginDialog.show();
+                    }
+                })
+                .create();
+        registerDialog.show();
+        WindowManager m = getWindowManager();
+        Display d = m.getDefaultDisplay();  //为获取屏幕宽、高
+        android.view.WindowManager.LayoutParams params = registerDialog.getWindow().getAttributes();  //获取对话框当前的参数值、
+        params.width = (int) (d.getWidth());    //宽度设置全屏宽度
+        registerDialog.getWindow().setAttributes(params);
+        registerDialog.getWindow().setGravity(Gravity.BOTTOM);//设置对话框打开位置
+        registerDialog.getWindow().setContentView(view);//设置对话框界面
+
+    }
+
+
 
 
     private void handlerLogin(final String n, final String p)
@@ -217,7 +312,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             @Override
             public void run() {
                 UserLoginJson result=null;
-                String s= Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"user/login","POST","username="+n.trim()+"&password="+p.trim());
+                String s= Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/user/login","POST","username="+n.trim()+"&password="+p.trim());
                 Gson gson=new Gson();
                 result= gson.fromJson(s,UserLoginJson.class);
                 if(result==null)
@@ -253,6 +348,52 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             }
         }).start();
 
+    }
+
+
+    ProgressBar registerProgressBar;
+    private void handlerRegister(final String name, final String nickName, final String password, String comfirmPassword)
+    {
+        if(!isRegisterInfoOK(name,nickName,password, comfirmPassword))
+        {
+            Toast.makeText(this, "输入信息有误，请检查后重新输入", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        registerProgressBar.setVisibility(View.VISIBLE);
+        //开启线程执行注册操作
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String params="username="+name+"&password="+password+"&nickname="+nickName+"&sex="+"男";
+                String s=Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/user","POST",params);
+                if(s==null)
+                {
+                   handler.sendEmptyMessage(NET_ERROR);
+                    return;
+                }
+                Gson gson=new Gson();
+                RequestResult result=gson.fromJson(s,RequestResult.class);
+                if(result.getCode()==StaticFinalValues.REGISTER_RESULT_FAIL)
+                {
+                    handler.sendEmptyMessage(REGISTER_FAIL);
+                    return;
+                }
+                else
+                {
+                    handler.sendEmptyMessage(REGISTER_SUCCESS);
+                    return;
+                }
+            }
+        }).start();
+
+
+
+
+    }
+
+    private boolean isRegisterInfoOK(String name,String nickName,String password,String comfirmPassword)
+    {
+        return true;
     }
 
 

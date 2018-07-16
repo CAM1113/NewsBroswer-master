@@ -11,7 +11,7 @@ public class StaticFinalValues {
     public static final String NEWS_INTENT_CHANNEL_NAME="NEWS_INTENT_CHANNEL_NAME";
 
     //数据库版号
-    public static final int DB_VERSION=3;
+    public static final int DB_VERSION=5;
 
     //频道展示的常量
     public static final int DBCHANNEL_FOR_SHOW=1;
@@ -22,14 +22,19 @@ public class StaticFinalValues {
     public static final int DBUSERINFO_FOR_UNLOGIN=0;
 
     //连接后台的url
-    public static final String NEWS_URL="http://10.55.160.72:10280/";
+   // public static final String NEWS_URL="http://10.55.160.72:10280";
 
-    public static final String DEFAULT_TOUXIANG="static/upload/monkey.jpg";
+    public static final String NEWS_URL="http://172.18.39.119:10280";
+    public static final String DEFAULT_TOUXIANG="/static/upload/monkey.jpg";
 
 
 
     public static final int LOGIN_RESULT_SUCCESS=0;
     public static final int LOGIN_RESULT_FAIL=1;
+
+
+    public static final int REGISTER_RESULT_SUCCESS=0;
+    public static final int REGISTER_RESULT_FAIL=1;
 
 
 

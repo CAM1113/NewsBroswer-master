@@ -124,7 +124,6 @@ public class DBUserInfo {
         cursor.close();
     }
 
-
     private static final String Store_DBUserInfo="insert into DBUserInfo" +
             "(name,nickname,password,sex,profilePicture,isLogin) values (?,?,?,?,?,?)";
     public static void storeDBUserInfo(SQLiteDatabase db, DBUserInfo userInfo)

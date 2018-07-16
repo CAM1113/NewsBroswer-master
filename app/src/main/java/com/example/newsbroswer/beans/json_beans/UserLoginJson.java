@@ -1,4 +1,4 @@
-package com.example.newsbroswer.beans;
+package com.example.newsbroswer.beans.json_beans;
 
 import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 

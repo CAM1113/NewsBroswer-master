@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +31,7 @@
             android:layout_marginRight="15dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="登录账号，精彩永不丢失"
+            android:text="注册账号，开启新的旅程"
             android:textSize="25sp"
             android:textColor="#fa111111"
             android:gravity="center"
@@ -45,10 +46,38 @@
             android:layout_marginRight="15dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:id="@+id/num_edit"
+            android:id="@+id/text1"
             android:background="@drawable/bg_searchview"
             android:height="40dp"
             android:hint="请输入账号"
+            />
+        <EditText
+        android:maxLines="1"
+        android:maxLength="20"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入昵称"
+        android:height="40dp"
+        android:background="@drawable/bg_searchview"
+        />
+        <EditText
+            android:maxLines="1"
+            android:maxLength="20"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/text3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入密码"
+            android:height="40dp"
+            android:background="@drawable/bg_searchview"
             />
         <EditText
             android:maxLines="1"
@@ -57,13 +86,14 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:id="@+id/pwd_edit"
+            android:id="@+id/text4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="请输入密码"
             android:height="40dp"
             android:background="@drawable/bg_searchview"
             />
+
         <LinearLayout
             android:layout_gravity="center"
             android:gravity="center"
@@ -73,57 +103,42 @@
             <CheckBox
                 android:shadowColor="@color/red"
                 android:checked="true"
-                android:id="@+id/jizumima"
-                android:layout_gravity="left|center"
+                android:id="@+id/text5"
+                android:layout_gravity="right|center"
                 android:gravity="left|center"
-                android:text="记住密码"
+                android:text="我已阅读并同意"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
             <TextView
-                android:layout_marginLeft="50dp"
+                android:id="@+id/text6"
                 android:height="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center"
                 android:gravity="right|center"
-                android:text="点击查看用户协议"
-                android:textSize="20sp"
+                android:text="用户协议"
                 android:textColor="#e80921ac"
                 />
         </LinearLayout>
 
 
         <Button
+
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="点击进入"
+            android:text="点击注册"
             android:textSize="25sp"
             android:textColor="#fffefe"
-            android:id="@+id/login_button"
+            android:id="@+id/register_button"
             android:background="@drawable/bg_button"
             />
-
-        <TextView
-            android:id="@+id/register_TexiView"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:text="立即注册"
-            android:textSize="20dp"
-            android:textColor="#d21c19c1"
-            />
-
     </LinearLayout>
     <ProgressBar
-        android:id="@+id/login_ProgressBar"
+        android:id="@+id/register_ProgressBar"
         android:visibility="gone"
         android:background="@drawable/circle"
         android:layout_gravity="center"

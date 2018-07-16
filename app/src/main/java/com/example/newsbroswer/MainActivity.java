@@ -34,10 +34,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.newsbroswer.adapters.ChannelAdapter;
 import com.example.newsbroswer.adapters.NewsAdapter;
 import com.example.newsbroswer.beans.channel.Channel;
 import com.example.newsbroswer.beans.database_beans.DBChannel;
+import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.beans.news.News;
 import com.example.newsbroswer.beans.news.news_config.NewsConfig;
 import com.example.newsbroswer.interfaces.OnChannelClickListener;
@@ -364,7 +366,6 @@ public class MainActivity extends AppCompatActivity {
                 {
                     channelListForUnChoosed.add(new Channel(channel.getChannelId(),channel.getChannelNames()));
                 }
-                Log.e("CAM",channel.getChannelNames());
             }
             updateChannelUI();
         }
@@ -425,6 +426,24 @@ public class MainActivity extends AppCompatActivity {
                 dialog.getWindow().setContentView(getChannelDialogView());//设置对话框界面
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageView userInfoImageView= (ImageView) findViewById(R.id.userInfo_imageView);
+        DBUserInfo userInfo=DBUserInfo.getLoginUserInDB(db);
+        if(userInfo!=null)
+        {
+            //如果用户已登陆，则直接显示用户头像
+            Glide.with(MainActivity.this).load(StaticFinalValues.NEWS_URL+userInfo.getProfilePicture()).into(userInfoImageView);
+            Log.e("CAM",StaticFinalValues.NEWS_URL+userInfo.getProfilePicture());
+        }
+        else
+        {
+            Glide.with(MainActivity.this).load(R.drawable.personal_center_pic).into(userInfoImageView);
+
+        }
     }
 
     //频道选择对话框

@@ -29,8 +29,9 @@ public class DataBaseUtil extends SQLiteOpenHelper {
             "profilePicture text," +
             "isLogin integer)";
 
-
-
+    public static final String CREATE_TABLE_DIANZAN="create table DBDianZan ( " +
+            "name text ," +
+            "newsURL text)";
 
 
     private Context context;
@@ -51,12 +52,14 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         Log.e("CAM","in database onCreate");
         sqLiteDatabase.execSQL(CREATE_TABLE_CHANNEL);
         sqLiteDatabase.execSQL(CREATE_TABLE_USERINFO);
+        sqLiteDatabase.execSQL(CREATE_TABLE_DIANZAN);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         sqLiteDatabase.execSQL("drop table if exists DBChannel");
         sqLiteDatabase.execSQL("drop table if exists DBUserInfo");
+        sqLiteDatabase.execSQL("drop table if exists DBDianZan");
         onCreate(sqLiteDatabase);
     }
 }

@@ -42,23 +42,15 @@
 
     </android.support.v7.widget.Toolbar>
 
-
-
-    <!--
-    <fragment
+    <FrameLayout
+        android:id="@+id/fragment_layout"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:name="android.webkit.WebViewFragment" />
-    -->
-    <WebView
-        android:id="@+id/webViewShowNews"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="0dp">
-    </WebView>
-
     <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,7 +84,7 @@
             android:layout_gravity="center"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            app:srcCompat="@android:drawable/sym_action_chat"
+            android:src="@drawable/pinglun"
             android:id="@+id/show_evalution_imageView" />
 
         <ImageView

@@ -83,9 +83,6 @@ public class NewsAdapter extends RecyclerView.Adapter <NewsAdapter.ViewHolder>{
             }
         });
 
-
-
-
     }
 
     @Override
@@ -115,5 +112,8 @@ public class NewsAdapter extends RecyclerView.Adapter <NewsAdapter.ViewHolder>{
             source=itemView.findViewById(R.id.sourceTextView);
         }
     }
+
+
+
 
 }
