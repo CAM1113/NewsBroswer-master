@@ -139,41 +139,7 @@ public class MainActivity extends AppCompatActivity {
         newsAdapter=new NewsAdapter(newsList, new OnNewsClickListener() {
             @Override
             public void onClick(News news) {
-                //点击新闻列表成功后的响应事件
-                Intent intent=new Intent(MainActivity.this,NewShowActivity.class);
-                //把点击的新闻传到新闻展示活动中去
-
-
-                intent.putExtra(NEWS_INTENT_TITLE,news.title);
-                intent.putExtra(StaticFinalValues.NEWS_INTENT_PUBLICDATE,news.getPubDate());
-                intent.putExtra(StaticFinalValues.NEWS_INTENE_LINK,news.link);
-                intent.putExtra(StaticFinalValues.NEWS_INTENT_HTML,news.html);
-                //将频道名称放入intent，如果频道名称是"",放入名称为推荐
-                if(channelNow.equals(""))
-                {
-                    intent.putExtra(NEWS_INTENT_CHANNEL_NAME,"推荐");
-                    intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,"");
-
-                }
-                else
-                {
-                    intent.putExtra(NEWS_INTENT_CHANNEL_NAME,channelNow);
-                    intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,news.channelId);
-                }
-
-                intent.putExtra(StaticFinalValues.NEWS_INTENT_DESC,news.desc);
-                int i=0;
-                for(ImagesListItem ima:news.getImageurls())
-                {
-                    i++;
-                    intent.putExtra("NEWS_INTENT_IMAGEURL"+i,ima.getUrl());
-                }
-                for(;i<3;i++)
-                {
-                    intent.putExtra("NEWS_INTENT_IMAGEURL"+i,"");
-                }
-                intent.putExtra(StaticFinalValues.NEWS_INTENT_SOURCE,news.source);
-                startActivity(intent);
+                openNewsShowActivity(news);
             }
         });
         newsRecvyclerView.setAdapter(newsAdapter);
@@ -333,7 +299,6 @@ public class MainActivity extends AppCompatActivity {
             channelListForRecycler.add(new Channel("","推荐"));
             channelNow="";
             channelListForUnChoosed.clear();
-
 
             for(icount=num-1;icount>=num/2;icount--)
             {
@@ -662,5 +627,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void openNewsShowActivity(News news)
+    {
+        //点击新闻列表成功后的响应事件
+        Intent intent=new Intent(MainActivity.this,NewShowActivity.class);
+        //把点击的新闻传到新闻展示活动中去
+        intent.putExtra(NEWS_INTENT_TITLE,news.title);
+        intent.putExtra(StaticFinalValues.NEWS_INTENT_PUBLICDATE,news.getPubDate());
+        intent.putExtra(StaticFinalValues.NEWS_INTENE_LINK,news.link);
+        intent.putExtra(StaticFinalValues.NEWS_INTENT_HTML,news.html);
+        //将频道名称放入intent，如果频道名称是"",放入名称为推荐
+        if(channelNow.equals(""))
+        {
+            intent.putExtra(NEWS_INTENT_CHANNEL_NAME,"推荐");
+            intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,"");
 
+        }
+        else
+        {
+            intent.putExtra(NEWS_INTENT_CHANNEL_NAME,channelNow);
+            intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,news.channelId);
+        }
+
+        intent.putExtra(StaticFinalValues.NEWS_INTENT_DESC,news.desc);
+        int i=0;
+        for(ImagesListItem ima:news.getImageurls())
+        {
+            i++;
+            intent.putExtra("NEWS_INTENT_IMAGEURL"+i,ima.getUrl());
+        }
+        for(;i<3;i++)
+        {
+            intent.putExtra("NEWS_INTENT_IMAGEURL"+i,"");
+        }
+        intent.putExtra(StaticFinalValues.NEWS_INTENT_SOURCE,news.source);
+        startActivity(intent);
+    }
 }

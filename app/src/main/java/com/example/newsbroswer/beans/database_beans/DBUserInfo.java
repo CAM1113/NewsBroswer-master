@@ -3,6 +3,7 @@ package com.example.newsbroswer.beans.database_beans;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.newsbroswer.utils.StaticFinalValues;
 import com.google.gson.annotations.SerializedName;
 
 import static com.example.newsbroswer.utils.StaticFinalValues.DBUSERINFO_FOR_LOGIN;
@@ -126,8 +127,16 @@ public class DBUserInfo {
 
     private static final String Store_DBUserInfo="insert into DBUserInfo" +
             "(name,nickname,password,sex,profilePicture,isLogin) values (?,?,?,?,?,?)";
-    public static void storeDBUserInfo(SQLiteDatabase db, DBUserInfo userInfo)
+    private static void storeDBUserInfo(SQLiteDatabase db, DBUserInfo userInfo)
     {
         db.execSQL(Store_DBUserInfo,new String[]{userInfo.getName(),userInfo.getNickname(),userInfo.getPassword(),userInfo.getSex(),userInfo.getProfilePicture(),userInfo.getLogin()+""});
     }
+
+    public static void logOut(SQLiteDatabase db,DBUserInfo info)
+    {
+        String sql="update DBUserInfo set isLogin = " + StaticFinalValues.DBUSERINFO_FOR_UNLOGIN +" where name = '"+info.getName()+"'";
+        db.execSQL(sql);
+
+    }
+
 }

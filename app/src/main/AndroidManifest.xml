@@ -20,7 +20,9 @@
         <activity android:name=".StartActivity" />
         <activity android:name=".LeadActivity" />
         <activity android:name=".NewShowActivity" />
-        <activity android:name=".UserInfoManagerActivity"></activity>
+        <activity android:name=".UserInfoManagerActivity" />
+        <activity android:name=".ShouChangActivity" />
+        <activity android:name=".ChangeUserInfoActivity"></activity>
     </application>
 
 </manifest>

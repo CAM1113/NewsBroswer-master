@@ -1,6 +1,7 @@
 package com.example.newsbroswer;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
@@ -11,13 +12,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +50,9 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         db=new DataBaseUtil(this,"NewsBroswer",null,StaticFinalValues.DB_VERSION).getWritableDatabase();
         userInfo= DBUserInfo.getLoginUserInDB(db);
         initToolBar();
+        inittuiChuButton();
+        initImageViews();
+        initChoices();
     }
 
 
@@ -154,20 +161,30 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         login_ProgressBar.setVisibility(View.GONE);
         DBUserInfo.storeLoginUserInDB(db,userInfo);
         initToolBar();
+        inittuiChuButton();
         loginDialog.dismiss();
     }
     private void logFail()
     {
         Toast.makeText(UserInfoManagerActivity.this,"账号或密码错误登陆失败",Toast.LENGTH_LONG).show();
         userInfo=null;
+        initToolBar();
+        inittuiChuButton();
         login_ProgressBar.setVisibility(View.GONE);
     }
     private void netError()
     {
         Toast.makeText(UserInfoManagerActivity.this,"网络错误",Toast.LENGTH_LONG).show();
         userInfo=null;
-        login_ProgressBar.setVisibility(View.GONE);
-        registerProgressBar.setVisibility(View.GONE);
+        if(login_ProgressBar!=null)
+        {
+            login_ProgressBar.setVisibility(View.GONE);
+        }
+
+        if(registerDialog!=null)
+        {
+            registerProgressBar.setVisibility(View.GONE);
+        }
     }
 
     private void registerFail()
@@ -198,7 +215,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     {
         View view= LayoutInflater.from(UserInfoManagerActivity.this).inflate(R.layout.login_layout,null);
         Button logBtn=view.findViewById(R.id.login_button);
-        //初始化退出按钮
+        //初始化退出对话框按钮
         ImageView dismissDialogImageView=view.findViewById(R.id.imageView4);
         dismissDialogImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,6 +247,8 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             }
         });
 
+
+
         loginDialog =new AlertDialog.Builder(UserInfoManagerActivity.this,R.style.MyDialogStyle)
                 .setCancelable(true)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -239,6 +258,8 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                     }
                 })
                 .create();
+        loginDialog.setView(view);
+        loginDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         loginDialog.show();
         WindowManager m = getWindowManager();
         Display d = m.getDefaultDisplay();  //为获取屏幕宽、高
@@ -246,7 +267,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         params.width = (int) (d.getWidth());    //宽度设置全屏宽度
         loginDialog.getWindow().setAttributes(params);
         loginDialog.getWindow().setGravity(Gravity.BOTTOM);//设置对话框打开位置
-        loginDialog.getWindow().setContentView(view);//设置对话框界面
     }
 
 
@@ -264,10 +284,13 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             }
         });
 
-        final TextView nameTextView=view.findViewById(R.id.text1);
-        final TextView nickNameTextView=view.findViewById(R.id.text2);
-        final TextView passwordTextView=view.findViewById(R.id.text3);
-        final TextView confirmPasswordTextView=view.findViewById(R.id.text4);
+        final EditText nameTextView=view.findViewById(R.id.text1);
+
+        final EditText nickNameTextView=view.findViewById(R.id.text2);
+        final EditText passwordTextView=view.findViewById(R.id.text3);
+        final EditText confirmPasswordTextView=view.findViewById(R.id.text4);
+
+
 
 
 
@@ -293,6 +316,8 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                     }
                 })
                 .create();
+        registerDialog.setView(view);
+        registerDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         registerDialog.show();
         WindowManager m = getWindowManager();
         Display d = m.getDefaultDisplay();  //为获取屏幕宽、高
@@ -300,7 +325,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         params.width = (int) (d.getWidth());    //宽度设置全屏宽度
         registerDialog.getWindow().setAttributes(params);
         registerDialog.getWindow().setGravity(Gravity.BOTTOM);//设置对话框打开位置
-        registerDialog.getWindow().setContentView(view);//设置对话框界面
 
     }
 
@@ -397,4 +421,62 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     {
         return true;
     }
+
+    private void inittuiChuButton()
+    {
+        Button button= (Button) findViewById(R.id.tuichu);
+        if(DBUserInfo.getLoginUserInDB(db)!=null)
+        {
+            //登陆情况下
+            button.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            //不登陆情况下
+            button.setVisibility(View.GONE);
+        }
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DBUserInfo.logOut(db,userInfo);
+                userInfo=null;
+                inittuiChuButton();
+                initToolBar();
+            }
+        });
+    }
+
+
+    private void initImageViews()
+    {
+        ImageView shouchang_imageView= (ImageView) findViewById(R.id.shouchang_imageView);
+        shouchang_imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(userInfo==null)
+                {
+                    Toast.makeText(UserInfoManagerActivity.this, "请登陆后使用此功能", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(UserInfoManagerActivity.this,ShouChangActivity.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+
+    private final static int ResultRequestCode=1;
+    private void initChoices()
+    {
+        LinearLayout change_userInfo= (LinearLayout) findViewById(R.id.change_userInfo);
+        change_userInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(UserInfoManagerActivity.this,ChangeUserInfoActivity.class);
+                startActivityForResult(intent,ResultRequestCode);
+            }
+        });
+    }
+
 }

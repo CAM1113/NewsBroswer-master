@@ -37,13 +37,15 @@
             />
 
         <EditText
+            android:singleLine="true"
+            android:imeOptions="actionNext"
             android:maxLines="1"
             android:maxLength="20"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:layout_width="match_parent"
             android:id="@+id/num_edit"
             android:background="@drawable/bg_searchview"
@@ -51,6 +53,8 @@
             android:hint="请输入账号"
             />
         <EditText
+            android:singleLine="true"
+            android:imeOptions="actionNext"
             android:maxLines="1"
             android:maxLength="20"
             android:layout_marginTop="10dp"
@@ -59,7 +63,7 @@
             android:layout_marginRight="15dp"
             android:id="@+id/pwd_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:hint="请输入密码"
             android:height="40dp"
             android:background="@drawable/bg_searchview"

@@ -51,6 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_marginBottom="5dp"
             android:id="@+id/yonghutouxiang"
             android:src="@drawable/image"
             android:layout_gravity="top|center"
@@ -76,6 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:layout_marginBottom="10dp"
             android:id="@+id/log_zuce_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,9 +113,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
+                android:id="@+id/shouchang_imageView"
                 android:src="@drawable/bushoucang1"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
+                android:layout_width="35dp"
+                android:layout_height="35dp" />
             <TextView
                 android:text="收藏"
                 android:layout_width="wrap_content"
@@ -129,8 +132,8 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:src="@drawable/history"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
+                android:layout_width="35dp"
+                android:layout_height="35dp" />
             <TextView
                 android:text="历史"
                 android:layout_width="wrap_content"
@@ -146,8 +149,8 @@
             <ImageView
 
                 android:src="@drawable/pinglun"
-                android:layout_width="40dp"
-                android:layout_height="40dp" />
+                android:layout_width="35dp"
+                android:layout_height="35dp" />
             <TextView
                 android:text="我的评论"
                 android:src="@drawable/pinglun"
@@ -163,13 +166,16 @@
         android:layout_height="1dp" />
 
     <LinearLayout
-        android:background="@color/white"
+        android:id="@+id/change_userInfo"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+
             android:layout_gravity="center"
             android:gravity="center|left"
-            android:textSize="27sp"
+            android:textSize="20sp"
             android:text="信息修改"
             android:layout_weight="1"
             android:layout_width="match_parent"
@@ -180,23 +186,23 @@
             app:srcCompat="@android:drawable/ic_menu_send" />
     </LinearLayout>
 
-    <TextView
-        android:layout_marginTop="10dp"
-        android:background="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
+
     <LinearLayout
-        android:background="@color/white"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
             android:layout_gravity="center"
             android:gravity="center|left"
-            android:textSize="27sp"
+            android:textSize="20sp"
             android:text="关于我们"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:id="@+id/textView4" />
+
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -204,13 +210,14 @@
     </LinearLayout>
 
     <LinearLayout
-        android:background="@color/white"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
             android:layout_gravity="center"
             android:gravity="center|left"
-            android:textSize="27sp"
+            android:textSize="20sp"
             android:text="系统设置"
             android:layout_weight="1"
             android:layout_width="match_parent"
@@ -220,5 +227,17 @@
             android:layout_height="40dp"
             app:srcCompat="@android:drawable/ic_menu_send" />
     </LinearLayout>
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="18dp"
+        android:layout_marginLeft="18dp"
+        android:id="@+id/tuichu"
+        android:textSize="17sp"
+        android:text="退出登录"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
