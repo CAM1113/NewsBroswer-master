@@ -17,7 +17,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center|left"
             app:srcCompat="?android:attr/actionModeCloseDrawable"
-            />
+            android:id="@+id/back_ImageView" />
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -27,6 +27,9 @@
             android:textSize="25sp"
             android:textColor="@color/gray"
             />
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,6 +39,7 @@
         >
 
         <LinearLayout
+            android:background="#ecfcfafa"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:layout_gravity="center"
@@ -44,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
-            >
+            android:id="@+id/touxiang">
 
             <TextView
                 android:layout_width="0dp"
@@ -91,7 +95,7 @@
             android:orientation="horizontal"
             android:background="#ecfcfafa"
             android:minHeight="40dp"
-            >
+            android:id="@+id/nicheng">
 
             <TextView
                 android:gravity="center|left"
@@ -107,7 +111,7 @@
                 android:text="DreamCatcher"
                 android:gravity="center|left"
                 android:textSize="18sp"
-                />
+                android:id="@+id/niChengTextView" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +137,8 @@
             android:layout_marginRight="5dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="#ecfcfafa">
+            android:background="#ecfcfafa"
+            android:id="@+id/xingbie">
 
             <TextView
                 android:layout_width="0dp"
@@ -148,7 +153,8 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:text="男"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:id="@+id/sex_now" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -175,7 +181,7 @@
             android:layout_height="40dp"
             android:background="#ecfcfafa"
             android:orientation="horizontal"
-            >
+            android:id="@+id/xiugaimima">
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="10"

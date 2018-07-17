@@ -473,10 +473,21 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         change_userInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent =new Intent(UserInfoManagerActivity.this,ChangeUserInfoActivity.class);
-                startActivityForResult(intent,ResultRequestCode);
+                if(userInfo!=null)
+                {
+
+                    Intent intent =new Intent(UserInfoManagerActivity.this,ChangeUserInfoActivity.class);
+                    startActivityForResult(intent,ResultRequestCode);
+                }
+                else
+                {
+                    Toast.makeText(UserInfoManagerActivity.this, "请先登录账号", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+
+
     }
 
 }

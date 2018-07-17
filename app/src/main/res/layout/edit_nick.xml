@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_searchview"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请输入昵称"
+        android:gravity="center"
+        android:textSize="18sp"
+        />
+
+    <EditText
+        android:maxLength="15"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:text="DreamCatcher"
+        android:background="@drawable/bg_searchview"
+        android:id="@+id/nickName_EditText" />
+
+    <LinearLayout
+       android:gravity="right"
+       android:layout_marginTop="10dp"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal"
+       android:layout_gravity="center"
+       android:layout_marginRight="10dp"
+       >
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="取消"
+           android:textSize="17sp"
+
+           android:id="@+id/cancal_Button" />
+       <Button
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="确定"
+           android:textSize="17sp"
+           android:layout_marginRight="15dp"
+           android:id="@+id/ok_Button" />
+   </LinearLayout>
+</LinearLayout>

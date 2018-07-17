@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.example.newsbroswer.adapters.NewsAdapter;
 import com.example.newsbroswer.beans.database_beans.DBShouChang;
@@ -29,11 +31,14 @@ public class ShouChangActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shou_chang);
-
         db=new DataBaseUtil(this,"NewsBroswer",null, StaticFinalValues.DB_VERSION).getWritableDatabase();
         userInfo=DBUserInfo.getLoginUserInDB(db);
-        List<News> list = DBShouChang.getNewsByName(db,userInfo.getName());
+        initTitle();
+    }
 
+    private void initRecyclerView()
+    {
+        List<News> list = DBShouChang.getNewsByName(db,userInfo.getName());
         LinearLayoutManager newsLinearLayoutManager=new LinearLayoutManager(this);
         RecyclerView newsRecvyclerView= (RecyclerView) findViewById(R.id.shouchang_recyclerView);
         newsRecvyclerView.setLayoutManager(newsLinearLayoutManager);
@@ -44,11 +49,27 @@ public class ShouChangActivity extends AppCompatActivity {
             }
         });
         newsRecvyclerView.setAdapter(newsAdapter);
+
+    }
+
+    private void initTitle()
+    {
+        ImageView backImageView= (ImageView) findViewById(R.id.back_imageView);
+        backImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
     }
 
 
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initRecyclerView();
+    }
 
     private void startNewShowActivity(News news)
     {

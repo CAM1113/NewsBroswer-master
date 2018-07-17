@@ -54,8 +54,6 @@ public class ShowEvalutionFragment extends Fragment{
         newsURL=activity.getNewsURL();
         db=new DataBaseUtil(activity,"NewsBroswer",null,StaticFinalValues.DB_VERSION).getWritableDatabase();
 
-
-
         getEvalutionFronHouTai(newsURL);
 
         adapter=new EvalutionAdapter(list, new DianZanClickListener() {

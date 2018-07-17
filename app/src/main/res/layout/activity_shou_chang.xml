@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_shou_chang"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.newsbroswer.ShouChangActivity">
+    <LinearLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/red"
+        >
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center|left"
+            app:srcCompat="?attr/actionModeCloseDrawable"
+            android:id="@+id/back_imageView" />
 
+        <TextView
+            android:layout_gravity="right|center"
+            android:layout_width="35dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="收藏"
+            android:layout_weight="1"
+            android:textSize="25sp"
+            android:textColor="@color/gray"
+            />
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/title"
         android:id="@+id/shouchang_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
