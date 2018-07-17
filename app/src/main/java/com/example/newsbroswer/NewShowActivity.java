@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.newsbroswer.beans.database_beans.DBHistory;
 import com.example.newsbroswer.beans.database_beans.DBShouChang;
 import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.beans.json_beans.EvalutionResult;
@@ -40,6 +41,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,17 +93,12 @@ public class NewShowActivity extends AppCompatActivity {
         {
             imageurls.add(new ImagesListItem(imageViewStr3));
         }
-
         newsNow=new News(pubDate, channelName, title, desc, imageurls, source, channelId, link,html);
-
         initToolBar();
         initfoot();
         setFootOnUnEvalution();
         initFragmentLayout();
-
-
-
-
+        addToHistory(userInfo,newsNow);
         Log.e("CAM","onCreate");
     }
 
@@ -283,7 +281,13 @@ public class NewShowActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String params="username="+userInfo.getName()+"&content="+s+"&newsURL="+newsURL;
+                String ss="";
+                try {
+                     ss= URLEncoder.encode(s,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String params="username="+userInfo.getName()+"&content="+ss+"&newsURL="+newsURL;
                 String result = Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/comment","POST",params);
                 if(result==null)
                 {
@@ -384,4 +388,43 @@ public class NewShowActivity extends AppCompatActivity {
             Glide.with(this).load(R.drawable.shoucang1).into(souchangImageView);
         }
     }
+
+    public void addToHistory(DBUserInfo userInfo, News news)
+    {
+        if(userInfo==null)
+        {
+            //没有登陆，不计入历史记录
+            return;
+        }
+        //存入历史记录
+        String title=news.title;
+        String channelName=news.channelName;
+        String desc=news.desc;
+        String source=news.source;
+        String channelId=news.getChannelId();
+        String link = news.link;
+        String pubDate=news.pubDate;
+        String html=news.html;
+
+        int i=0;
+        String [] imageurls=new String[3];
+        for(ImagesListItem ima:news.getImageurls())
+        {
+            imageurls[i]=ima.getUrl();
+            i++;
+        }
+        for(;i<3;i++)
+        {
+            imageurls[i]="";
+        }
+        DBHistory dbHistory=new DBHistory(userInfo.getName(), pubDate, channelName, title,
+                desc, imageurls[0],imageurls[1], imageurls[2],  source,channelId,
+                link,  html);
+        DBHistory.storeDBHistory(db,dbHistory);
+    }
+
+
+
+
+
 }

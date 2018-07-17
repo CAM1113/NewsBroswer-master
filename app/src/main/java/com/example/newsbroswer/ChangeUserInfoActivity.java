@@ -24,6 +24,9 @@ import com.example.newsbroswer.utils.StaticFinalValues;
 import com.example.newsbroswer.utils.Utils;
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class ChangeUserInfoActivity extends AppCompatActivity {
 
     DBUserInfo userInfo;
@@ -83,7 +86,13 @@ public class ChangeUserInfoActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String params="oldPassword="+oldPsw+"&newPassword="+newPsw+"&nickname="+nickName+"&sex="+sex;
+                String ss="";
+                try {
+                    ss= URLEncoder.encode(nickName,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String params="oldPassword="+oldPsw+"&newPassword="+newPsw+"&nickname="+ss+"&sex="+sex;
                 String result= Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/user/"+name,"PUT",params);
                 if(result==null)
                 {

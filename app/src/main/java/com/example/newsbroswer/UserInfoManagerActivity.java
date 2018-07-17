@@ -35,6 +35,9 @@ import com.example.newsbroswer.utils.StaticFinalValues;
 import com.example.newsbroswer.utils.Utils;
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserInfoManagerActivity extends AppCompatActivity {
@@ -390,7 +393,13 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String params="username="+name+"&password="+password+"&nickname="+nickName+"&sex="+"M";
+                String ss="";
+                try {
+                    ss= URLEncoder.encode(nickName,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String params="username="+name+"&password="+password+"&nickname="+ss+"&sex="+"M";
                 String s=Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/user","POST",params);
                 if(s==null)
                 {
@@ -449,8 +458,8 @@ public class UserInfoManagerActivity extends AppCompatActivity {
 
     private void initImageViews()
     {
-        ImageView shouchang_imageView= (ImageView) findViewById(R.id.shouchang_imageView);
-        shouchang_imageView.setOnClickListener(new View.OnClickListener() {
+        LinearLayout shouchang_layout= (LinearLayout) findViewById(R.id.ShouChang_layout);
+        shouchang_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(userInfo==null)
@@ -459,6 +468,21 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                     return;
                 }
                 Intent intent = new Intent(UserInfoManagerActivity.this,ShouChangActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        LinearLayout history_Layout= (LinearLayout) findViewById(R.id.history);
+        history_Layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(userInfo==null)
+                {
+                    Toast.makeText(UserInfoManagerActivity.this, "请登陆后使用此功能", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent = new Intent(UserInfoManagerActivity.this,HistoryActivity.class);
                 startActivity(intent);
             }
         });

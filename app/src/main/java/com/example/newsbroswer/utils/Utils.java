@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.List;
 
@@ -214,10 +216,12 @@ public class Utils {
         try
         {
             URL url = new URL(urlStr);
+
             connection= (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(requestMethod);
             connection.setReadTimeout(8000);
             connection.setConnectTimeout(8000);
+
             //如果是POST方式请求数据，利用输出流传递参数
             if(params!=null)
             {

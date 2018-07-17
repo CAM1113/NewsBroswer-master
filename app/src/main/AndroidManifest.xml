@@ -22,7 +22,8 @@
         <activity android:name=".NewShowActivity" />
         <activity android:name=".UserInfoManagerActivity" />
         <activity android:name=".ShouChangActivity" />
-        <activity android:name=".ChangeUserInfoActivity"></activity>
+        <activity android:name=".ChangeUserInfoActivity" />
+        <activity android:name=".HistoryActivity"></activity>
     </application>
 
 </manifest>

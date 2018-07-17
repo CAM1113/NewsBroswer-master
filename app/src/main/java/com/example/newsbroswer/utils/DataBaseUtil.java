@@ -39,10 +39,13 @@ public class DataBaseUtil extends SQLiteOpenHelper {
             "imageurls1 text,imageurls2 text,imageurls3 text,source text,channelId text," +
             "link text,html,text)";
 
+    public static final String CREATE_TABLE_HISTORY="create table DBHistory ( "+
+            "name text, pubDate text,channelName text,title text,desc text," +
+            "imageurls1 text,imageurls2 text,imageurls3 text,source text,channelId text," +
+            "link text,html,text)";
+
 
     private Context context;
-
-
     public DataBaseUtil(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         this.context=context;
@@ -60,6 +63,7 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_USERINFO);
         sqLiteDatabase.execSQL(CREATE_TABLE_DIANZAN);
         sqLiteDatabase.execSQL(CREATE_TABLE_SHOUCHANG);
+        sqLiteDatabase.execSQL(CREATE_TABLE_HISTORY);
     }
 
     @Override
@@ -68,6 +72,7 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table if exists DBUserInfo");
         sqLiteDatabase.execSQL("drop table if exists DBDianZan");
         sqLiteDatabase.execSQL("drop table if exists DBShouChang");
+        sqLiteDatabase.execSQL("drop table if exists DBHistory");
 
         onCreate(sqLiteDatabase);
     }
