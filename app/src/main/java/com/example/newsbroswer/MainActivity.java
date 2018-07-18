@@ -643,24 +643,27 @@ public class MainActivity extends AppCompatActivity {
         {
             intent.putExtra(NEWS_INTENT_CHANNEL_NAME,"推荐");
             intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,"");
-
         }
         else
         {
             intent.putExtra(NEWS_INTENT_CHANNEL_NAME,channelNow);
             intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,news.channelId);
         }
-
         intent.putExtra(StaticFinalValues.NEWS_INTENT_DESC,news.desc);
-        int i=0;
+
+        int i=-1;
+        String [] keys=new String[]{StaticFinalValues.NEWS_INTENT_IMAGEURL1,StaticFinalValues.NEWS_INTENT_IMAGEURL2,StaticFinalValues.NEWS_INTENT_IMAGEURL3};
         for(ImagesListItem ima:news.getImageurls())
         {
             i++;
-            intent.putExtra("NEWS_INTENT_IMAGEURL"+i,ima.getUrl());
+            if(i==3)
+                break;
+            intent.putExtra(keys[i],ima.getUrl());
         }
+        i++;
         for(;i<3;i++)
         {
-            intent.putExtra("NEWS_INTENT_IMAGEURL"+i,"");
+            intent.putExtra(keys[i],"");
         }
         intent.putExtra(StaticFinalValues.NEWS_INTENT_SOURCE,news.source);
         startActivity(intent);

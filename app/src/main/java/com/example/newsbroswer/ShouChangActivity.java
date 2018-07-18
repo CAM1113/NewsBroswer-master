@@ -84,15 +84,19 @@ public class ShouChangActivity extends AppCompatActivity {
         intent.putExtra(NEWS_INTENT_CHANNEL_NAME,news.channelName);
         intent.putExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_ID,"");
         intent.putExtra(StaticFinalValues.NEWS_INTENT_DESC,news.desc);
-        int i=0;
+        int i=-1;
+        String [] keys=new String[]{StaticFinalValues.NEWS_INTENT_IMAGEURL1,StaticFinalValues.NEWS_INTENT_IMAGEURL2,StaticFinalValues.NEWS_INTENT_IMAGEURL3};
         for(ImagesListItem ima:news.getImageurls())
         {
             i++;
-            intent.putExtra("NEWS_INTENT_IMAGEURL"+i,ima.getUrl());
+            intent.putExtra(keys[i],ima.getUrl());
         }
+        i++;
         for(;i<3;i++)
         {
-            intent.putExtra("NEWS_INTENT_IMAGEURL"+i,"");
+            if(i==3)
+                break;
+            intent.putExtra(keys[i],"");
         }
         intent.putExtra(StaticFinalValues.NEWS_INTENT_SOURCE,news.source);
         startActivity(intent);
