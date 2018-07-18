@@ -20,6 +20,7 @@ import com.example.newsbroswer.NewShowActivity;
 import com.example.newsbroswer.R;
 import com.example.newsbroswer.adapters.EvalutionAdapter;
 import com.example.newsbroswer.beans.database_beans.DBDianZan;
+import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.beans.json_beans.EvalutionResult;
 import com.example.newsbroswer.beans.news.News;
 import com.example.newsbroswer.interfaces.DianZanClickListener;
@@ -40,6 +41,7 @@ public class ShowEvalutionFragment extends Fragment{
     EvalutionAdapter adapter;
     List<EvalutionResult.Evalution> list = new ArrayList<>();
 
+    DBUserInfo userInfo;
     String newsURL;
     NewShowActivity activity;
     RecyclerView recyclerView;
@@ -54,6 +56,7 @@ public class ShowEvalutionFragment extends Fragment{
         newsURL=activity.getNewsURL();
         db=new DataBaseUtil(activity,"NewsBroswer",null,StaticFinalValues.DB_VERSION).getWritableDatabase();
 
+        userInfo=DBUserInfo.getLoginUserInDB(db);
         getEvalutionFronHouTai(newsURL);
 
         adapter=new EvalutionAdapter(list, new DianZanClickListener() {
@@ -104,7 +107,7 @@ public class ShowEvalutionFragment extends Fragment{
         new Thread(new Runnable() {
         @Override
         public void run() {
-            String params="username="+evalution.getUser().getName()+"&commentId="+evalution.getId();
+            String params="username="+userInfo.getName()+"&commentId="+evalution.getId();
             String result=Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/like/delete","POST",params);
             if(result==null)
             {
@@ -126,7 +129,7 @@ public class ShowEvalutionFragment extends Fragment{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String params="username="+evalution.getUser().getName()+"&commentId="+evalution.getId();
+                String params="username="+userInfo.getName()+"&commentId="+evalution.getId();
                 String result=Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/like","POST",params);
                 if(result==null)
                 {
