@@ -119,7 +119,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     {
         denglutixing_Title.setVisibility(View.VISIBLE);
         Glide.with(UserInfoManagerActivity.this)
-                .load(StaticFinalValues.NEWS_URL+StaticFinalValues.DEFAULT_TOUXIANG).into(touxinagImageView);
+                .load(R.drawable.logo1).into(touxinagImageView);
         denglu_zuce_TextView.setVisibility(View.VISIBLE);
         yonghumingTextView.setVisibility(View.GONE);
         denglu_zuce_TextView.setText("登陆/注册");
@@ -206,9 +206,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
 
     }
-
-
-
 
 
     //登陆的用户名和密码
@@ -334,8 +331,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     }
 
 
-
-
     private void handlerLogin(final String n, final String p)
     {
         login_ProgressBar.setVisibility(View.VISIBLE);
@@ -433,6 +428,8 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         return true;
     }
 
+
+    AlertDialog logoutDialog;
     private void inittuiChuButton()
     {
         Button button= (Button) findViewById(R.id.tuichu);
@@ -446,13 +443,33 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             //不登陆情况下
             button.setVisibility(View.GONE);
         }
+        //退出登陆界面
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DBUserInfo.logOut(db,userInfo);
-                userInfo=null;
-                inittuiChuButton();
-                initToolBar();
+                logoutDialog =new AlertDialog.Builder(UserInfoManagerActivity.this)
+                        .setMessage("确定退出登陆么？")
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                DBUserInfo.logOut(db, userInfo);
+                                userInfo = null;
+                                inittuiChuButton();
+                                initToolBar();
+                                logoutDialog.dismiss();
+                            }
+                        })
+                        .setCancelable(true)
+                        .create();
+                logoutDialog.show();
+
             }
         });
     }
@@ -525,6 +542,26 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        LinearLayout about_us_Layout= (LinearLayout) findViewById(R.id.aboutus);
+        change_userInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(UserInfoManagerActivity.this, "暂未实现，敬请期待", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        LinearLayout system_setting_Layout= (LinearLayout) findViewById(R.id.system_setting);
+        change_userInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(UserInfoManagerActivity.this, "暂未实现，敬请期待", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+
 
 
 

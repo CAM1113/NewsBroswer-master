@@ -243,6 +243,13 @@ public class NewShowActivity extends AppCompatActivity {
         channelName= (TextView) findViewById(R.id.denglutixing_Title);
         channelName.setText(getIntent().getStringExtra(StaticFinalValues.NEWS_INTENT_CHANNEL_NAME));
 
+        ImageView imageView= (ImageView) findViewById(R.id.share);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(NewShowActivity.this, "暂未实现，敬请期待", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initFragmentLayout()

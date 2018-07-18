@@ -191,6 +191,7 @@
 
 
     <LinearLayout
+        android:id="@+id/aboutus"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_width="match_parent"
@@ -213,6 +214,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/system_setting"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_width="match_parent"
