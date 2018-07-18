@@ -487,6 +487,20 @@ public class UserInfoManagerActivity extends AppCompatActivity {
             }
         });
 
+        LinearLayout myEvalutionLayout= (LinearLayout) findViewById(R.id.myEvalution_layout);
+        myEvalutionLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(userInfo==null)
+                {
+                    Toast.makeText(UserInfoManagerActivity.this, "清先进行登陆", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent intent=new Intent(UserInfoManagerActivity.this,MyEvalutionActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

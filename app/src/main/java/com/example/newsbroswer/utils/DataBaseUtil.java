@@ -44,6 +44,11 @@ public class DataBaseUtil extends SQLiteOpenHelper {
             "imageurls1 text,imageurls2 text,imageurls3 text,source text,channelId text," +
             "link text,html,text)";
 
+    public static final String CREATE_TABLE_MyEvalution="create table DBMyEvalution ( "+
+            "name text,id integer,evalution text,pubDate text,channelName text,title text,desc text," +
+            "imageurls1 text,imageurls2 text,imageurls3 text,source text,channelId text," +
+            "link text,html,text)";
+
 
     private Context context;
     public DataBaseUtil(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -58,12 +63,12 @@ public class DataBaseUtil extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        Log.e("CAM","in database onCreate");
         sqLiteDatabase.execSQL(CREATE_TABLE_CHANNEL);
         sqLiteDatabase.execSQL(CREATE_TABLE_USERINFO);
         sqLiteDatabase.execSQL(CREATE_TABLE_DIANZAN);
         sqLiteDatabase.execSQL(CREATE_TABLE_SHOUCHANG);
         sqLiteDatabase.execSQL(CREATE_TABLE_HISTORY);
+        sqLiteDatabase.execSQL(CREATE_TABLE_MyEvalution);
     }
 
     @Override
@@ -73,7 +78,7 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table if exists DBDianZan");
         sqLiteDatabase.execSQL("drop table if exists DBShouChang");
         sqLiteDatabase.execSQL("drop table if exists DBHistory");
-
+        sqLiteDatabase.execSQL("drop table if exists DBMyEvalution");
         onCreate(sqLiteDatabase);
     }
 }

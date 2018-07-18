@@ -142,6 +142,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/myEvalution_layout"
             android:gravity="center"
             android:layout_weight="1"
             android:layout_marginRight="10dp"

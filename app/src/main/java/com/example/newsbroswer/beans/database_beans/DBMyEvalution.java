@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by 王灿 on 2018/7/17.
+ * Created by 王灿 on 2018/7/18.
  */
 
-public class DBHistory {
+public class DBMyEvalution {
     public String name;
+    public int id;
+    public String evalution;
     public String pubDate;
     public String channelName;
     public String title;
@@ -28,13 +30,15 @@ public class DBHistory {
     public String html;
 
 
-    public DBHistory() {}
+    public DBMyEvalution() {}
 
-    public DBHistory(String name, String pubDate, String channelName, String title,
-                     String desc, String imageurls1, String imageurls2, String imageurls3,
-                     String source, String channelId, String link, String html) {
-        this.html = html;
+    public DBMyEvalution(String name, int id,String evalution,String pubDate, String channelName, String title,
+                         String desc, String imageurls1, String imageurls2, String imageurls3,
+                         String source, String channelId, String link, String html)
+    {
         this.name = name;
+        this.id = id;
+        this.evalution = evalution;
         this.pubDate = pubDate;
         this.channelName = channelName;
         this.title = title;
@@ -45,7 +49,9 @@ public class DBHistory {
         this.source = source;
         this.channelId = channelId;
         this.link = link;
+        this.html = html;
     }
+
 
     public String getName() {
         return name;
@@ -53,6 +59,22 @@ public class DBHistory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getEvalution() {
+        return evalution;
+    }
+
+    public void setEvalution(String evalution) {
+        this.evalution = evalution;
     }
 
     public String getPubDate() {
@@ -143,15 +165,18 @@ public class DBHistory {
         this.html = html;
     }
 
-    public static List<News> getNewsByName(SQLiteDatabase db, String name)
+
+    public static List<DBMyEvalution> getMyEvalution(SQLiteDatabase db, String name)
     {
-        List<News> list=new ArrayList<>();
-        String sql="select * from DBHistory where name = '"+name+"'";
+        List<DBMyEvalution> list=new ArrayList<>();
+        String sql="select * from DBMyEvalution where name = '"+name+"' order by id desc";
         Cursor cursor=db.rawQuery(sql,null);
         if(cursor.moveToFirst())
         {
             do
             {
+                int id=cursor.getInt(cursor.getColumnIndex("id"));
+                String evalution=cursor.getString(cursor.getColumnIndex("evalution"));
                 String  pubDate=cursor.getString(cursor.getColumnIndex("pubDate"));
                 String channelName=cursor.getString(cursor.getColumnIndex("channelName"));
                 String title=cursor.getString(cursor.getColumnIndex("title"));
@@ -176,9 +201,9 @@ public class DBHistory {
                 {
                     imagesListItems.add(new ImagesListItem(imageurls3));
                 }
-
-                News news=new News(pubDate, channelName, title, desc,
-                        imagesListItems, source,  channelId, link,  html);
+                DBMyEvalution news=new DBMyEvalution(name, id,evalution,pubDate, channelName, title,
+                    desc,imageurls1, imageurls2, imageurls3,
+                    source, channelId, link, html);
                 list.add(news);
             }
             while(cursor.moveToNext());
@@ -187,38 +212,33 @@ public class DBHistory {
         return list;
     }
 
-    public static boolean isInDB(SQLiteDatabase db, String name,String links)
-    {
-        List<News> list=new ArrayList<>();
-        String sql="select * from DBHistory where name = '"+name+"' and link = '"+links+"'";
-        Cursor cursor=db.rawQuery(sql,null);
-        if(cursor.moveToFirst())
-        {
-            return true;
-        }
-        cursor.close();
-        return false;
-    }
 
-    public static void storeDBHistory(SQLiteDatabase db,DBHistory sc)
+    public static void storeDBMyEvalution(SQLiteDatabase db,DBMyEvalution sc)
     {
-        if(isInDB(db,sc.getName(),sc.getLink()))
-        {
-            //如果在数据库中，要先删除上一条历史记录
-            deleteDBHistory(db,sc.getName(),sc.getLink());
-        }
-
-        String sql="insert into DBHistory(name,pubDate,channelName,title,desc,imageurls1,imageurls2,imageurls3," +
-                "source,channelId,link,html) values (?,?,?,?,?,?,?,?,?,?,?,?)";
-        db.execSQL(sql,new String[]{sc.name,sc.pubDate,sc.channelName,sc.title,sc.desc,sc.imageurls1,sc.imageurls2,sc.imageurls3,
+        String sql="insert into DBMyEvalution(name,id,evalution,pubDate,channelName,title,desc,imageurls1,imageurls2,imageurls3," +
+                "source,channelId,link,html) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        db.execSQL(sql,new String[]{sc.name,sc.id+"",sc.evalution,sc.pubDate,sc.channelName,sc.title,sc.desc,sc.imageurls1,sc.imageurls2,sc.imageurls3,
                 sc.source,sc.channelId,sc.link,sc.html});
     }
 
 
-    public static void deleteDBHistory(SQLiteDatabase db,String name,String link)
+    public static void deleteDBMyEvalution(SQLiteDatabase db,String name,String link)
     {
-        String sql="delete from DBShouChang where name = '"+name+"' and link = '"+link+"'";
+        String sql="delete from DBMyEvalution where name = '"+name+"' and link = '"+link+"'";
         db.execSQL(sql);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

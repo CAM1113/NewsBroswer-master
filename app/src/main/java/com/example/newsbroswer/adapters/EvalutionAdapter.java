@@ -82,13 +82,6 @@ public class EvalutionAdapter extends RecyclerView.Adapter<EvalutionAdapter.View
             }
         });
 
-
-
-
-
-
-
-
     }
 
     @Override

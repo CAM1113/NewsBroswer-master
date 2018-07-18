@@ -23,10 +23,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.newsbroswer.beans.database_beans.DBHistory;
+import com.example.newsbroswer.beans.database_beans.DBMyEvalution;
 import com.example.newsbroswer.beans.database_beans.DBShouChang;
 import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.beans.json_beans.EvalutionResult;
 import com.example.newsbroswer.beans.json_beans.RequestResult;
+import com.example.newsbroswer.beans.json_beans.SendEvalutionResult;
 import com.example.newsbroswer.beans.news.ImagesListItem;
 import com.example.newsbroswer.beans.news.News;
 import com.example.newsbroswer.fragments.NewsFragment;
@@ -173,7 +175,7 @@ public class NewShowActivity extends AppCompatActivity {
                     return;
                 }
                 //发送评论
-                sendEvalutionToHouTai(userInfo,evalu,newsURL);
+                sendEvalutionToHouTai(userInfo,evalu);
                 //重置界面
                 evalutionEditText.setText("");
                 clearEditTextFocus();
@@ -276,7 +278,7 @@ public class NewShowActivity extends AppCompatActivity {
         }
     };
 
-    private void sendEvalutionToHouTai(final DBUserInfo userInfo, final String s, final String newsURL)
+    private void sendEvalutionToHouTai(final DBUserInfo userInfo, final String s)
     {
         new Thread(new Runnable() {
             @Override
@@ -287,7 +289,7 @@ public class NewShowActivity extends AppCompatActivity {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                String params="username="+userInfo.getName()+"&content="+ss+"&newsURL="+newsURL;
+                String params="username="+userInfo.getName()+"&content="+ss+"&newsURL="+newsNow.getLink();
                 String result = Utils.sendHttpRequest(StaticFinalValues.NEWS_URL+"/comment","POST",params);
                 if(result==null)
                 {
@@ -295,14 +297,16 @@ public class NewShowActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    Log.e("CAM",result);
                     Gson gson=new Gson();
-                    RequestResult rr=gson.fromJson(result,RequestResult.class);
+                    SendEvalutionResult rr=gson.fromJson(result,SendEvalutionResult.class);
                     if(rr.getCode()==1)
                     {
                         handler.sendEmptyMessage(EVALUTION_FAIL);
                         return;
                     }
                     handler.sendEmptyMessage(SEND_EVALUTION_SUCCESS);
+                    storeMyEvalution(userInfo,s,rr.getId());
                     Log.e("CAM",result);
                 }
             }
@@ -421,6 +425,36 @@ public class NewShowActivity extends AppCompatActivity {
                 desc, imageurls[0],imageurls[1], imageurls[2],  source,channelId,
                 link,  html);
         DBHistory.storeDBHistory(db,dbHistory);
+    }
+
+    private void storeMyEvalution(DBUserInfo userInfo,String s,int id)
+    {
+        News news=newsNow;
+        String title=news.title;
+        String channelName=news.channelName;
+        String desc=news.desc;
+        String source=news.source;
+        String channelId=news.getChannelId();
+        String link = news.link;
+        String pubDate=news.pubDate;
+        String html=news.html;
+
+        int i=0;
+        String [] imageurls=new String[3];
+        for(ImagesListItem ima:news.getImageurls())
+        {
+            imageurls[i]=ima.getUrl();
+            i++;
+        }
+        for(;i<3;i++)
+        {
+            imageurls[i]="";
+        }
+        DBMyEvalution dbMyEvalution=new DBMyEvalution(userInfo.getName(),id,s,pubDate, channelName,
+                title, desc,  imageurls[0],  imageurls[1],  imageurls[2],
+                source,  channelId,  link,  html);
+        DBMyEvalution.storeDBMyEvalution(db,dbMyEvalution);
+
     }
 
 

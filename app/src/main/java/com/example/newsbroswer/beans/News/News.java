@@ -20,7 +20,9 @@ public class News {
     public News() {
     }
 
-    public News(String pubDate, String channelName, String title, String desc, List<ImagesListItem> imageurls, String source, String channelId, String link, String html) {
+    public News(String pubDate, String channelName, String title, String desc,
+                List<ImagesListItem> imageurls, String source, String channelId,
+                String link, String html) {
         this.pubDate = pubDate;
         this.channelName = channelName;
         this.title = title;
@@ -31,6 +33,7 @@ public class News {
         this.link = link;
         this.html = html;
     }
+
 
     public String getPubDate() {
         return pubDate;

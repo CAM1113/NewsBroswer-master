@@ -26,7 +26,7 @@ public class StaticFinalValues {
     public static final String NEWS_INTENT_CHANNEL_ID="NEWS_INTENT_CHANNEL_ID";
 
     //数据库版号
-    public static final int DB_VERSION=4;
+    public static final int DB_VERSION=5;
 
     //频道展示的常量
     public static final int DBCHANNEL_FOR_SHOW=1;
