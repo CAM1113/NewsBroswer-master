@@ -53,7 +53,7 @@
         android:focusableInTouchMode="true"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:orientation="horizontal"
         >
         <EditText
@@ -79,11 +79,12 @@
             android:id="@+id/fabu_button" />
 
         <ImageView
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"
             android:visibility="visible"
-            android:layout_marginTop="2dp"
             android:layout_gravity="center"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/pinglun"
             android:id="@+id/show_evalution_imageView" />
 
@@ -92,8 +93,9 @@
             android:visibility="visible"
             android:layout_margin="2dp"
             android:layout_gravity="center"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="4dp"
             android:src="@drawable/shoucang1"/>
      </LinearLayout>
 </LinearLayout>
