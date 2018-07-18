@@ -14,10 +14,10 @@
         android:background="@color/red"
         >
         <ImageView
-            android:layout_width="35dp"
-            android:layout_height="50dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center|left"
-            app:srcCompat="?attr/actionModeCloseDrawable"
+            android:src="@drawable/back"
             android:id="@+id/back_imageView" />
 
         <TextView

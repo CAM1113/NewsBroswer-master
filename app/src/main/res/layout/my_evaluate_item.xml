@@ -23,7 +23,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:id="@+id/textView5"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textColor="@color/black"
             tools:text="震惊，王生兰返回火星"
             />
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="然而这三者之间何其相通！炽热的爱情可以充实图书的内容，图书又是人们最忠实的朋友。 —— 蒙田"
-            android:textColor="#05113b"
+
             android:textSize="17sp"
             />
     <LinearLayout
@@ -63,7 +63,9 @@
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="3dp"
         android:textColor="@color/black"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         />
 </LinearLayout>
