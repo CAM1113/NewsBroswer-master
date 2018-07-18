@@ -212,7 +212,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     String userName="";
     String password="";
     ProgressBar login_ProgressBar;
-    CheckBox checkBox;
     private void openLoginDialog()
     {
         View view= LayoutInflater.from(UserInfoManagerActivity.this).inflate(R.layout.login_layout,null);
@@ -239,7 +238,6 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         final EditText userNameTextView=view.findViewById(R.id.num_edit);
         final EditText passwordEditText=view.findViewById(R.id.pwd_edit);
         login_ProgressBar=view.findViewById(R.id.login_ProgressBar);
-        checkBox=view.findViewById(R.id.jizumima);
         logBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -352,15 +350,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
                 {
                     //登陆成功
                     userInfo=result.getData();
-                    if(checkBox.isChecked())
-                    {
-                        userInfo.setPassword(p);
-                    }
-                    else
-                    {
-                        //没有记住密码，密码设置为空
-                        userInfo.setPassword("");
-                    }
+                    userInfo.setPassword(p);
                     userInfo.setLogin(StaticFinalValues.DBUSERINFO_FOR_LOGIN);
                     handler.sendEmptyMessage(LOGIN_SUCCESS);
                     return;
@@ -544,7 +534,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         });
 
         LinearLayout about_us_Layout= (LinearLayout) findViewById(R.id.aboutus);
-        change_userInfo.setOnClickListener(new View.OnClickListener() {
+        about_us_Layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(UserInfoManagerActivity.this, "暂未实现，敬请期待", Toast.LENGTH_SHORT).show();
@@ -552,7 +542,7 @@ public class UserInfoManagerActivity extends AppCompatActivity {
         });
 
         LinearLayout system_setting_Layout= (LinearLayout) findViewById(R.id.system_setting);
-        change_userInfo.setOnClickListener(new View.OnClickListener() {
+        system_setting_Layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(UserInfoManagerActivity.this, "暂未实现，敬请期待", Toast.LENGTH_SHORT).show();

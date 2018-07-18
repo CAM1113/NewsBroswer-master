@@ -17,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.newsbroswer.beans.database_beans.DBUserInfo;
 import com.example.newsbroswer.beans.json_beans.UserLoginJson;
 import com.example.newsbroswer.utils.DataBaseUtil;
@@ -26,6 +27,8 @@ import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChangeUserInfoActivity extends AppCompatActivity {
 
@@ -125,8 +128,10 @@ public class ChangeUserInfoActivity extends AppCompatActivity {
         LinearLayout nicheng = (LinearLayout) findViewById(R.id.nicheng);
         LinearLayout xingbie = (LinearLayout) findViewById(R.id.xingbie);
         final LinearLayout xiugaimima = (LinearLayout) findViewById(R.id.xiugaimima);
-
-
+        CircleImageView circleImageView= (CircleImageView) findViewById(R.id.imageView);
+        Glide.with(this).load(userInfo.getProfilePicture())
+                .error(R.drawable.monkey)
+                .into(circleImageView);
         TextView niChengTextView = (TextView) findViewById(R.id.niChengTextView);
         niChengTextView.setText(userInfo.getNickname());
 

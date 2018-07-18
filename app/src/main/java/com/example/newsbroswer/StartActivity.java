@@ -50,7 +50,7 @@ public class StartActivity extends AppCompatActivity {
                 {
                     intent = new Intent(StartActivity.this,LeadActivity.class);
                     editor.putBoolean("IS_FIRST_START_APP",false);
-                    //editor.apply();
+                    editor.apply();
                 }
                 else
                 {

@@ -74,17 +74,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <CheckBox
-                android:shadowColor="@color/red"
-                android:checked="true"
-                android:id="@+id/jizumima"
-                android:layout_gravity="left|center"
-                android:gravity="left|center"
-                android:text="记住密码"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+
             <TextView
-                android:layout_marginLeft="50dp"
                 android:height="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
