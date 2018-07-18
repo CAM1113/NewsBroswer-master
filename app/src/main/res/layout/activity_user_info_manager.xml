@@ -20,10 +20,10 @@
             android:layout_height="match_parent">
             <ImageView
                 android:id="@+id/backImageView"
-                android:scaleType="center"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:srcCompat="?attr/actionModeCloseDrawable" />
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/back"
+                 />
             <TextView
                 android:textColor="@color/white"
                 android:id="@+id/denglutixing_Title"

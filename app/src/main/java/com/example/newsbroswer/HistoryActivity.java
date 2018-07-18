@@ -1,7 +1,9 @@
 package com.example.newsbroswer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,6 +64,33 @@ public class HistoryActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        ImageView deletsAllImageView= (ImageView) findViewById(R.id.delete);
+        deletsAllImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog dialog=new AlertDialog.Builder(HistoryActivity.this)
+                        .setCancelable(true)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.e("CAM","删除");
+                                DBHistory.deleteAllDBHistory(db);
+                                initRecyclerView();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .setMessage("是否清空历史记录？")
+                        .create();
+                dialog.show();
+            }
+        });
+
     }
 
 

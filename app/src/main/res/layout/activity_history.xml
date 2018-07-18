@@ -14,10 +14,11 @@
         android:background="@color/red"
         >
         <ImageView
-            android:layout_width="35dp"
-            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_gravity="center|left"
-            app:srcCompat="?attr/actionModeCloseDrawable"
+            android:src="@drawable/back"
             android:id="@+id/back_imageView" />
 
         <TextView
@@ -30,9 +31,12 @@
             android:textSize="25sp"
             android:textColor="@color/gray"
             />
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="40dp" />
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/delete"
+            android:src="@drawable/huishou"
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:layout_below="@+id/title"

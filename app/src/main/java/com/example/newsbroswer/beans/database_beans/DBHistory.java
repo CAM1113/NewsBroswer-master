@@ -189,11 +189,11 @@ public class DBHistory {
 
     public static boolean isInDB(SQLiteDatabase db, String name,String links)
     {
-        List<News> list=new ArrayList<>();
         String sql="select * from DBHistory where name = '"+name+"' and link = '"+links+"'";
         Cursor cursor=db.rawQuery(sql,null);
         if(cursor.moveToFirst())
         {
+            cursor.close();
             return true;
         }
         cursor.close();
@@ -217,7 +217,13 @@ public class DBHistory {
 
     public static void deleteDBHistory(SQLiteDatabase db,String name,String link)
     {
-        String sql="delete from DBShouChang where name = '"+name+"' and link = '"+link+"'";
+        String sql="delete from DBHistory where name = '"+name+"' and link = '"+link+"'";
+        db.execSQL(sql);
+    }
+
+    public static void deleteAllDBHistory(SQLiteDatabase db)
+    {
+        String sql="delete from DBHistory";
         db.execSQL(sql);
     }
 
