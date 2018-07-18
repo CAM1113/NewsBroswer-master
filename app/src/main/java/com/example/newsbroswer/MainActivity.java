@@ -416,13 +416,15 @@ public class MainActivity extends AppCompatActivity {
         if(userInfo!=null)
         {
             //如果用户已登陆，则直接显示用户头像
-            Glide.with(MainActivity.this).load(StaticFinalValues.NEWS_URL+userInfo.getProfilePicture()).into(userInfoImageView);
+            Glide.with(MainActivity.this).
+                    load(StaticFinalValues.NEWS_URL+userInfo.getProfilePicture())
+                    .error(R.drawable.image)
+                    .into(userInfoImageView);
             Log.e("CAM",StaticFinalValues.NEWS_URL+userInfo.getProfilePicture());
         }
         else
         {
             Glide.with(MainActivity.this).load(R.drawable.personal_center_pic).into(userInfoImageView);
-
         }
     }
 

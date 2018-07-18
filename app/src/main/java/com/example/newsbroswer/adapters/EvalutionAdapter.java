@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.text.DateFormat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,15 @@ public class EvalutionAdapter extends RecyclerView.Adapter<EvalutionAdapter.View
     @Override
     public void onBindViewHolder(final EvalutionAdapter.ViewHolder holder, final int position)
     {
-       // Glide.with(holder.dianzan.getContext()).load(StaticFinalValues.NEWS_URL+list.get(position).getUser().getProfilePicture()).into(holder.touxiang);
+        if(holder.touxiang==null)
+        {
+            Log.e("CAM","holder.touxiang==null");
+
+        }else {
+            Glide.with(holder.dianzan.getContext())
+                    .load(StaticFinalValues.NEWS_URL+list.get(position).getUser().getProfilePicture())
+                    .into(holder.touxiang);
+        }
         holder.yonghuming.setText(list.get(position).getUser().getNickname());
         holder.dianzancishu.setText(list.get(position).getLikeCount()+"");
         holder.pingLunLeiRong.setText(list.get(position).getContent());
@@ -99,7 +108,7 @@ public class EvalutionAdapter extends RecyclerView.Adapter<EvalutionAdapter.View
         TextView evalutionTime;
         public ViewHolder(View itemView) {
             super(itemView);
-            touxiang=itemView.findViewById(R.id.imageView1);
+            touxiang=itemView.findViewById(R.id.image_View1);
             yonghuming=itemView.findViewById(R.id.text_View1);
             dianzan=itemView.findViewById(R.id.image_View2);
             dianzancishu=itemView.findViewById(R.id.text_View2);

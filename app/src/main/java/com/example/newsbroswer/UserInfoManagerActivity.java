@@ -108,7 +108,9 @@ public class UserInfoManagerActivity extends AppCompatActivity {
     {
         denglutixing_Title.setVisibility(View.INVISIBLE);
         Glide.with(UserInfoManagerActivity.this)
-                .load(StaticFinalValues.NEWS_URL+userInfo.getProfilePicture()).into(touxinagImageView);
+                .load(StaticFinalValues.NEWS_URL+userInfo.getProfilePicture())
+                .error(R.drawable.monkey)
+                .into(touxinagImageView);
         denglu_zuce_TextView.setVisibility(View.GONE);
         yonghumingTextView.setVisibility(View.VISIBLE);
         yonghumingTextView.setText(userInfo.getNickname());

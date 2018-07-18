@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#61dbdbdb"
+    android:background="#fdf8f8"
     android:orientation="vertical"
     android:layout_marginLeft="6dp"
     android:layout_marginRight="6dp"
@@ -16,9 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_View1"
-            android:src="@drawable/ic"
+            android:src="@drawable/monkey"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="2" />
@@ -52,10 +52,8 @@
 
     <TextView
             android:id="@+id/text_View3"
-            android:layout_marginTop="1dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:background="#fdf8f8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="我需要三件东西：爱情友谊和图书。然而这三者之间何其相通！炽热的爱情可以充实图书的内容，图书又是人们最忠实的朋友。 —— 蒙田"
@@ -82,6 +80,13 @@
             android:textColor="#0c139a"
             android:textSize="15dp"
             />
-
     </LinearLayout>
+    <TextView
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        />
 </LinearLayout>

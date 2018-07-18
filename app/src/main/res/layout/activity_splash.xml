@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:layout_gravity="center"
+    >
+
+    <ImageView
+        android:id="@+id/image_View1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/begin"
+        android:scaleType="fitXY"
+        />
+
+    <ImageView
+        android:id="@+id/image_View2"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:src="@drawable/logo1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        />
+    <TextView
+        android:id="@+id/text_View1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
+        android:text="新视界"
+        android:textColor="#ef0621"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/text_View2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_View1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-90dp"
+        android:text="更多精彩尽在新视界"
+        android:textColor="#a9373131"
+        android:textSize="20sp" />
+</RelativeLayout>
